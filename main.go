@@ -3,12 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"wyname/utils"
 )
 
 var (
 	addr = flag.String("addr", "localhost", "Domain address")
 	port = flag.Int("port", 6969, "Port")
 	ssl  = flag.Bool("ssl", false, "Use SSL")
+	// Origin for secure
+	Origin string
 )
 
 // go run main.go --ssl=true --addr="whatsyourna.me" --port=8888
@@ -20,8 +23,9 @@ func main() {
 	fmt.Println("port", *port)
 	fmt.Println("ssl", *ssl)
 
-	origin := origing()
-	fmt.Println("origin", origin)
+	Origin = origing()
+	fmt.Println("origin", Origin)
+	utils.Abc("qqq")
 
 }
 
