@@ -19,4 +19,18 @@ func main() {
 	fmt.Println("addr", *addr)
 	fmt.Println("port", *port)
 	fmt.Println("ssl", *ssl)
+
+	origin := origing()
+	fmt.Println("origin", origin)
+
+}
+
+func origing() string {
+	var o string
+	if *ssl {
+		o = "https://" + *addr
+	} else {
+		o = "http://" + *addr
+	}
+	return o
 }
