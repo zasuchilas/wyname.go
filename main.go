@@ -3,29 +3,39 @@ package main
 import (
 	"flag"
 	"fmt"
+	"wyname/kernel"
 	"wyname/utils"
 )
 
 var (
-	addr = flag.String("addr", "localhost", "Domain address")
-	port = flag.Int("port", 6969, "Port")
-	ssl  = flag.Bool("ssl", false, "Use SSL")
-	// Origin for secure
-	Origin string
+	addr   = flag.String("addr", "localhost", "Domain address")
+	port   = flag.Int("port", 6969, "Port")
+	ssl    = flag.Bool("ssl", false, "Use SSL")
+	origin string
 )
 
 // go run main.go --ssl=true --addr="whatsyourna.me" --port=8888
 
 func main() {
+
+	// loading
+	configsrv()
+
+	utils.Abc("qqq")
+
+}
+
+func configsrv() {
 	flag.Parse()
 	fmt.Println("wyname", "ok")
 	fmt.Println("addr", *addr)
 	fmt.Println("port", *port)
 	fmt.Println("ssl", *ssl)
 
-	Origin = origing()
-	fmt.Println("origin", Origin)
-	utils.Abc("qqq")
+	origin = origing()
+	fmt.Println("origin", origin)
+
+	kernel.Load(*addr, *port, *ssl)
 
 }
 

@@ -6,7 +6,7 @@ import (
 )
 
 // Abc Probe
-func Abc(s string) error {
+func Abc(s string) {
 	fmt.Println("abc use main var", s, kernel.Qwer)
-	return nil
+	fmt.Println("Conf", kernel.Conf)
 }
