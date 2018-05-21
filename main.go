@@ -15,6 +15,9 @@ func main() {
 	flag.Parse()
 
 	http.HandleFunc("/", serveHome)
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		serveWs(w, r)
+	})
 
 	fmt.Println(*addr, "started")
 	err := http.ListenAndServe(*addr, nil)
