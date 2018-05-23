@@ -96,3 +96,9 @@ func micro(v int) float64 {
 	r := float64(v) / 1000000
 	return r
 }
+
+/// Взять градусы, вернуть целое число
+func mega(v float64) int {
+	r := int(math.Round(v * 1000000))
+	return r
+}
