@@ -58,6 +58,7 @@ func (l *Lifer) read() {
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		// c.hub.broadcast <- message
 		// TODO здесь нужно разбирать коды (inbox from browser)
+		// сперва устанавливается соединение - валидируется по hmac
 		log.Println("message: ", string(message))
 		l.send <- []byte("ko: " + string(message))
 	}

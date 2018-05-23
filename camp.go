@@ -1,3 +1,8 @@
 package main
 
-// Справочник секторов
+// Sectors справочник секторов
+var Sectors map[string]*Sector
+
+func create() {
+
+}
