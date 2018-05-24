@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"strconv"
 )
 
 const (
@@ -66,7 +67,7 @@ func sectors(mla, mlo int) (map[int]string, error) {
 func sector(lat, lon float64) (string, error) {
 	lonPart, _ := sectorsLonPart(lon)
 	latPart, _ := sectorsLatPart(lat)
-	return string(latPart) + "|" + string(lonPart), nil
+	return strconv.Itoa(latPart) + "|" + strconv.Itoa(lonPart), nil
 }
 
 /// Получить latPart ключа сектора

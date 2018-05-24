@@ -67,6 +67,7 @@ var latparttests = []partspair{
 	{57.633395, 57635},
 	{57.635395, 57640},
 	{57.653895, 57655},
+	{157.653895, 157655},
 	{0, 0},
 	{-57.633895, -57630},
 	{-57.633395, -57630},
@@ -91,14 +92,40 @@ func TestSectorsLatPart(t *testing.T) {
 }
 
 var lonparttests = []partspair{
-	{57.633895, 57635},
-	{57.633395, 57635},
-	{57.635395, 57640},
-	{57.653895, 57655},
+	{57.633895, 5764},
+	{57.633395, 5764},
+	{57.625395, 5763},
+	{57.653895, 5766},
 }
 
 func TestSectorsLonPart(t *testing.T) {
+	for _, pair := range lonparttests {
+		v, _ := sectorsLonPart(pair.value)
+		if v != pair.result {
+			t.Error("For", pair.value, "expected", pair.result, "got", v)
+		}
+	}
+}
 
+type sectorpair struct {
+	lat float64
+	lon float64
+	sec string
+}
+
+var sectortests = []sectorpair{
+	{57.63389587402344, 39.83459854125977, "57635|3984"},
+	{57.62788764527776, 39.82338690757751, "57630|3983"},
+	{57.63990310499766, 39.845810174942024, "57640|3985"},
+}
+
+func TestSector(t *testing.T) {
+	for _, pair := range sectortests {
+		v, _ := sector(pair.lat, pair.lon)
+		if v != pair.sec {
+			t.Error("For", pair.lat, pair.lon, "expected", pair.sec, "got", v)
+		}
+	}
 }
 
 func TestSectors(t *testing.T) {
