@@ -157,3 +157,22 @@ func TestSectors(t *testing.T) {
 	t.Error(secs)
 	// fmt.Println("secs")
 }
+
+func TestLatab(t *testing.T) {
+	lt := latable()
+	t.Error(lt[0], lt[1], lt[2], lt[89], lt[91])
+}
+func TestDistable(t *testing.T) {
+	dt := distable()
+	for i := 0; i < 90; i++ {
+		ipar := float64(i)
+		t.Error(ipar, dt[ipar])
+	}
+}
+
+func TestDist589(t *testing.T) {
+	g, _ := newGps(57.633895, 39.834598)
+	d589 := g.dist589()
+	dt := distable()
+	t.Error(g, d589, dt[57], dt[58])
+}
