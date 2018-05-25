@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"strconv"
 )
@@ -51,13 +50,8 @@ func sectors(mla, mlo int) (map[int]string, error) {
 	points[4] = [2]float64{lam, lop}      // tD
 
 	for i, v := range points {
-		fmt.Println(i, v)
 		s[i], _ = sector(v[0], v[1])
 	}
-	// for (var i = 1; i <= 8; i++) {
-	// 	// print('$i: ${points[i]}');
-	// 	s.add(sector(points[i][0], points[i][1]));
-	// }
 
 	return s, e
 }
@@ -98,8 +92,51 @@ func micro(v int) float64 {
 	return r
 }
 
-/// Взять градусы, вернуть целое число
+// Взять градусы, вернуть целое число
 func mega(v float64) int {
 	r := int(math.Round(v * 1000000))
 	return r
 }
+
+// Получить секторы экрана
+// вернее, области включающей 2 точки
+// A нижняя левая, C верхняя правая
+/*
+static Set screenSectors(List tA, List tC) {
+	Set sects = new Set();
+
+	// checks
+	if ((tA[0] > tC[0]) || (tA[1] > tC[1])) return sects;
+
+	// lons
+	Set losSet = new Set();
+	int losC = sectorsLonPart(tC[1]); // lo крайнего справа сектора C
+	int losA = sectorsLonPart(tA[1]); // lo крайнего слева сектора A
+	int computedSectLon = losA;
+	while (computedSectLon <= losC) {
+		losSet.add(computedSectLon);
+		computedSectLon += 1; // прибавляем по одному сектору
+	}
+	// print('losSet: $losSet');
+
+	// lats
+	Set lasSet = new Set();
+	int lasC = sectorsLatPart(tC[0]); // la крайнего сверху сектора C
+	int lasA = sectorsLatPart(tA[0]); // la крайнего снизу сектора A
+	int computedSectLat = lasA;
+	while (computedSectLat <= lasC) {
+		lasSet.add(computedSectLat);
+		computedSectLat += 5; // прибавляем по одному секторы (у lat шаг 5)
+	}
+	// print('lasSet: $lasSet');
+
+	lasSet.forEach((e1) {
+		losSet.forEach((e2) {
+			sects.add('${e1}|${e2}');
+		});
+	});
+	// print('sects: $sects');
+
+	return sects;
+}
+*/
