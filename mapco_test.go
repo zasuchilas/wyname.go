@@ -172,7 +172,7 @@ func TestDistable(t *testing.T) {
 
 func TestDist589(t *testing.T) {
 	g, _ := newGps(57.633895, 39.834598)
-	d589 := g.dist589()
+	_, d589 := g.dist589()
 	dt := distable()
 	t.Error(g, d589, dt[57], dt[58])
 }

@@ -105,20 +105,28 @@ type Gps struct {
 	lon float64
 }
 
-func newGps(lat, lon float64) (*Gps, error) {
-	var e error
+func newGps(lat, lon float64) (gps *Gps, err error) {
 	if lat > 180 || lat < -180 || lon > 90 || lon < -90 {
-		e = fmt.Errorf("coordinates out og range")
+		err = fmt.Errorf("coordinates out og range")
 	}
-	return &Gps{lat, lon}, e
+	return &Gps{lat, lon}, err
 }
 
 // Вычислить все секторы
 // [0] member sector
-func (g *Gps) compute() ([]string, error) {
+func (g *Gps) compute() (secs []string, err error) {
 	// нужно вычислить точки A и C
+	north, east := g.dist589()
+	a, err := newGps(g.lat-north, g.lon-east)
+	if err != nil {
+		err = fmt.Errorf("failed to create point A")
+	}
+	b, err := newGps(g.lat-north, g.lon-east)
+	if err != nil {
+		err = fmt.Errorf("failed to create point B")
+	}
 
-	return []string{}, nil
+	return []string{}, err
 }
 
 // var latab [90]float64
@@ -147,8 +155,10 @@ func distable() map[float64]float64 {
 const equator float64 = 0.0052910052910053
 
 // dist588 возвращает смещение в градусах на 588 метров для данных координат
-func (g *Gps) dist589() float64 {
-	return equator / math.Cos(g.lat*(math.Pi/180))
+func (g *Gps) dist589() (north, east float64) {
+	north = equator
+	east = equator / math.Cos(g.lat*(math.Pi/180))
+	return
 	/*
 		вдоль мередиана смешение в градусах постоянно
 		вдоль параллели - изменяется в зависимости от широты
