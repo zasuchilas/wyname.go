@@ -122,6 +122,8 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		send: make(chan []byte, 256),
 	}
 
+	log.Println("Conn uid:", &conn)
+
 	go lifer.read()
 	go lifer.write()
 }
