@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"unicode/utf8"
 )
 
 var addr = flag.String("addr", ":6969", "http service address")
@@ -14,10 +15,7 @@ var addr = flag.String("addr", ":6969", "http service address")
 func main() {
 	flag.Parse()
 
-	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(w, r)
-	})
+	http.HandleFunc("/", serveAll)
 
 	fmt.Println(*addr, "started")
 	err := http.ListenAndServe(*addr, nil)
@@ -26,15 +24,25 @@ func main() {
 	}
 }
 
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL)
-	if r.URL.Path != "/" {
-		http.Error(w, "Not found", http.StatusNotFound)
-		return
+func serveAll(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("Upgrade") == "websocket" {
+		// TODO проверить Origin
+		// log.Print("host:", r.Host, "\n")
+		// log.Print("RemoteAddr:", r.RemoteAddr, "\n")
+		if utf8.RuneCountInString(r.URL.Path) == 65 {
+			// TODO точно ли / + 64 hmac всегда
+			serveWs(w, r)
+		}
+	} else {
+		// home.html for dev
+		if r.URL.Path != "/" {
+			http.Error(w, "Not found", http.StatusNotFound)
+			return
+		}
+		if r.Method != "GET" {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		http.ServeFile(w, r, "home.html")
 	}
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	http.ServeFile(w, r, "home.html")
 }
