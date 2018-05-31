@@ -8,7 +8,7 @@ import (
 
 const equator float64 = 0.0052910052910053
 
-// dist588 возвращает смещение в градусах на 588 метров для данных координат
+// dist588 возвращает смещение в градусах на 589 метров для данных координат
 func (g *Gps) dist589() (north, east float64) {
 	north = equator
 	east = math.Abs(equator / math.Cos(g.lat*(math.Pi/180)))
@@ -126,8 +126,10 @@ type Gps struct {
 
 func newGps(lat, lon float64) (gps *Gps, err error) {
 	if lat > 180 || lat < -180 || lon > 90 || lon < -90 {
-		err = fmt.Errorf("coordinates out og range")
+		err = fmt.Errorf("coordinates out of range")
 	}
+	// TODO: для крайних случаев делаем обработку (180, -180, 90, -90, 0)
+	// для большого превышения ? возвращаем ошибку, но крайние случаи - норма, обрабатываем
 	return &Gps{lat, lon}, err
 }
 
@@ -144,13 +146,13 @@ func (g *Gps) compute() (secs []string, err error) {
 	if err != nil {
 		err = fmt.Errorf("failed to create point A")
 	}
-	c, err := newGps(g.lat-north, g.lon-east)
+	c, err := newGps(g.lat+north, g.lon+east)
 	if err != nil {
 		err = fmt.Errorf("failed to create point C")
 	}
 	ala, alo := a.sectornums()
 	cla, clo := c.sectornums()
-	cap := (ala - cla + 1) * (alo - clo + 1)
+	cap := (cla - ala + 1) * (clo - alo + 1) // TODO test this with different placies & 180
 	secs = make([]string, cap)
 	secs[0] = isec
 	idx := 1
