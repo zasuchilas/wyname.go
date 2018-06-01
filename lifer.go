@@ -25,6 +25,10 @@ var (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		log.Println("Origin:", r.Header.Get("Origin"))
+		return true
+	},
 }
 
 // Lifer пользователь поверх websocket
