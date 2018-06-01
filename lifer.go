@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -110,7 +111,7 @@ func (l *Lifer) write() {
 }
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
-	log.Println("uh", r.URL)
+	log.Println("conn path:", r.URL)
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -122,7 +123,9 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		send: make(chan []byte, 256),
 	}
 
-	log.Println("Conn uid:", &conn)
+	uid := fmt.Sprint(&conn)[2:]
+	log.Println("Conn uid:", uid)
+	lifer.send <- []byte(uid)
 
 	go lifer.read()
 	go lifer.write()

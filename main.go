@@ -29,7 +29,7 @@ func serveAll(w http.ResponseWriter, r *http.Request) {
 		// TODO проверить Origin
 		// log.Print("host:", r.Host, "\n")
 		// log.Print("RemoteAddr:", r.RemoteAddr, "\n")
-		if utf8.RuneCountInString(r.URL.Path) == 65 {
+		if utf8.RuneCountInString(r.URL.Path) == 65 { // все равное origin проверять
 			// TODO точно ли / + 64 hmac всегда
 			serveWs(w, r)
 		}
