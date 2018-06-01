@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 )
 
-var addr = flag.String("addr", ":6969", "http service address")
+var addr = flag.String("addr", ":6970", "http service address")
 
 // go run main.go --addr="whatsyourna.me:8888"
 
@@ -29,7 +29,8 @@ func serveAll(w http.ResponseWriter, r *http.Request) {
 		// TODO проверить Origin
 		// log.Print("host:", r.Host, "\n")
 		// log.Print("RemoteAddr:", r.RemoteAddr, "\n")
-		if utf8.RuneCountInString(r.URL.Path) == 65 { // все равное origin проверять
+		// if utf8.RuneCountInString(r.URL.Path) == 65 { // все равное origin проверять
+		if utf8.RuneCountInString(r.URL.Path) > 60 { // все равное origin проверять
 			// TODO точно ли / + 64 hmac всегда
 			serveWs(w, r)
 		}
