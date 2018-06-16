@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"unicode/utf8"
 )
 
 var addr = flag.String("addr", ":6970", "http service address")
@@ -32,7 +31,8 @@ func serveAll(w http.ResponseWriter, r *http.Request) {
 		// if utf8.RuneCountInString(r.URL.Path) == 65 { // все равное origin проверять
 		if r.URL.Path == "/sync" {
 			synchronize(w, r)
-		} else if utf8.RuneCountInString(r.URL.Path) > 60 { // все равное origin проверять
+		} else {
+			// } else if utf8.RuneCountInString(r.URL.Path) > 60 { // все равное origin проверять
 			// TODO точно ли / + 64 hmac всегда
 			serveWs(w, r)
 		}

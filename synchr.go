@@ -26,9 +26,12 @@ func synchronize(w http.ResponseWriter, r *http.Request) {
 }
 
 func now() string {
-	n := time.Now().Unix()
+	n := time.Now().UnixNano()
 	s := strconv.FormatInt(n, 10)
 	return s
 	// log.Println(n.Unix())
 	// log.Println(n.UnixNano())
+	// 1529048205774
+	// 1529057006311727000
+	// 1529057032862392400
 }
