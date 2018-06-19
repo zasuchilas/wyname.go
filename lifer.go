@@ -40,6 +40,7 @@ func (l *Lifer) read() {
 		// l.sector.unregister <- l
 		log.Println("defer read", l.hash)
 		l.conn.Close() // закрываем соединение websockets
+		statminus()
 	}()
 
 	l.conn.SetReadLimit(maxMessageSize)
@@ -65,8 +66,9 @@ func (l *Lifer) read() {
 		if len(inbox) > 0 {
 			log.Println(inbox)
 			if inbox[0] == codeStatsRequest {
-				log.Println(codeStatsResponse + ",669")
-				l.send <- []byte(codeStatsResponse + ",669")
+				st := statget()
+				log.Println(codeStatsResponse + "," + st)
+				l.send <- []byte(codeStatsResponse + "," + st)
 			} else {
 				l.send <- []byte("18," + string(message))
 			}
@@ -141,6 +143,8 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		conn: conn,
 		send: make(chan []byte, 256),
 	}
+
+	statplus()
 
 	// hash := fmt.Sprint(&conn)[2:]
 	// log.Println("Conn hash:", hash)

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"sync/atomic"
 )
 
 var addr = flag.String("addr", ":6970", "http service address")
@@ -48,4 +50,23 @@ func serveAll(w http.ResponseWriter, r *http.Request) {
 		}
 		http.ServeFile(w, r, "home.html")
 	}
+}
+
+// stat is total lifers counter
+var stat int64
+
+// statplus increases lifers counter
+func statplus() {
+	atomic.AddInt64(&stat, 1)
+}
+
+// statminus reduces lifers counter
+func statminus() {
+	atomic.AddInt64(&stat, -1)
+}
+
+// startget returns stat value
+func statget() string {
+	st := atomic.LoadInt64(&stat)
+	return strconv.FormatInt(st, 10)
 }
