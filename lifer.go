@@ -56,30 +56,21 @@ func (l *Lifer) read() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		// c.hub.broadcast <- message
-		// TODO здесь нужно разбирать коды (inbox from browser)
-		// сперва устанавливается соединение - валидируется по hmac
-		log.Println("message: ", string(message))
-		// l.send <- []byte("ko," + string(message))
+		// inbox from browser
 		inbox := strings.Split(string(message), ",")
 		log.Println("inbox len", len(inbox))
 		if len(inbox) > 0 {
 			log.Println(inbox)
-			if inbox[0] == codeStatsRequest {
+			switch inbox[0] {
+			case codeStatsRequest:
 				st := statget()
 				log.Println(codeStatsResponse + "," + st)
 				l.send <- []byte(codeStatsResponse + "," + st)
-			} else {
+			default:
 				l.send <- []byte("18," + string(message))
+				// c.hub.broadcast <- message
 			}
-			// switch inbox[0] {
-			// case codeStatsRequest:
-			// 	log.Println(codeStatsResponse + ",669")
-			// 	l.send <- []byte(codeStatsResponse + ",669")
-			// 	// l.send <- []byte(strings.Join([]string{codeStatsResponse, "669"}, ","))
-			// }
 		}
-		// l.send <- []byte("18," + string(message))
 	}
 }
 
