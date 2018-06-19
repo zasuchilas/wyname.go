@@ -26,7 +26,7 @@ var (
 type Lifer struct {
 	// sector
 	// subscription
-
+	hash string
 	conn *websocket.Conn // websocket connection
 
 	// buffered channel of outbound messages
@@ -36,6 +36,7 @@ type Lifer struct {
 func (l *Lifer) read() {
 	defer func() {
 		// l.sector.unregister <- l
+		log.Println("defer read", l.hash)
 		l.conn.Close() // закрываем соединение websockets
 	}()
 
@@ -56,7 +57,8 @@ func (l *Lifer) read() {
 		// TODO здесь нужно разбирать коды (inbox from browser)
 		// сперва устанавливается соединение - валидируется по hmac
 		log.Println("message: ", string(message))
-		l.send <- []byte("ko: " + string(message))
+		// l.send <- []byte("ko," + string(message))
+		l.send <- []byte("18," + string(message))
 	}
 }
 
@@ -65,6 +67,7 @@ func (l *Lifer) write() {
 	defer func() {
 		ticker.Stop()
 		l.conn.Close() // TODO дублирует то что в read ?
+		log.Println("defer write", l.hash)
 	}()
 
 	for {
@@ -114,13 +117,15 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	lifer := &Lifer{
+		hash: fmt.Sprint(&conn)[2:],
 		conn: conn,
 		send: make(chan []byte, 256),
 	}
 
-	uid := fmt.Sprint(&conn)[2:]
-	log.Println("Conn uid:", uid)
-	lifer.send <- []byte(uid)
+	// hash := fmt.Sprint(&conn)[2:]
+	// log.Println("Conn hash:", hash)
+	// lifer.hash = hash
+	lifer.send <- []byte("12," + lifer.hash)
 
 	go lifer.read()
 	go lifer.write()
