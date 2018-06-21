@@ -45,6 +45,20 @@ func pressed(samf int, i int) bool {
 	return (samf & i) != 0
 }
 
+// sexfrom returns sex from samf
+func sexfrom(samf int) int {
+	var s int
+	switch {
+	case samf&sf != 0:
+		s = sf
+	case samf&sm != 0:
+		s = sm
+	default:
+		s = sn
+	}
+	return s
+}
+
 func sexFromSamf(samf int) string {
 	s := decode(sn)
 	for i := 0; i < len(ses); i++ {
