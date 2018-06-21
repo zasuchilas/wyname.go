@@ -45,6 +45,9 @@ var desamftests = []desamfpairs{
 	{sn | ac | fc, sn, ac, 0, 0},
 	{sm, sm, an, 0, 0},
 	{sf | sn | fc, sn, an, 0, 0},
+	{sf | sm | ac | fc, sn, ac, 0, 0},
+	{sf | ac | fc, sf, ac, sf | ac, fc},
+	{sf | ac | fc | fd, sf, ac, sf | ac, fc | fd},
 }
 
 func TestDesamf(t *testing.T) {
