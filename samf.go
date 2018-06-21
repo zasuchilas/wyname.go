@@ -1,7 +1,5 @@
 package main
 
-import "strings"
-
 const (
 	sn = 1       // 1
 	sm = 2       // 2
@@ -35,15 +33,17 @@ var (
 	ses = []int{sn, sm, sf}
 	sea = []int{an, aa, ab, ac, ad, ae, af}
 	sef = []int{ma, mb, mc, md, me, mf, fa, fb, fc, fd, fe, ff}
+	// ses = []int{sn, sm, sf}
+	// sea = []int{an, aa, ab, ac, ad, ae, af}
 	// sem = []int{ma, mb, mc, md, me, mf}
 	// sef = []int{fa, fb, fc, fd, fe, ff}
 )
 
 // desamf parses the samf
-func desamf(samf int) (sex int, age int, sa int, filters int) {
+func desamf(samf int) (sex int, age int, sa int, filter int) {
 	var count int
 	// sex
-	for v := range ses {
+	for _, v := range ses {
 		if (samf & v) != 0 {
 			count++
 			sex = v
@@ -54,7 +54,7 @@ func desamf(samf int) (sex int, age int, sa int, filters int) {
 	}
 	// age
 	count = 0
-	for v := range sea {
+	for _, v := range sea {
 		if (samf & v) != 0 {
 			count++
 			age = v
@@ -71,165 +71,170 @@ func desamf(samf int) (sex int, age int, sa int, filters int) {
 	}
 	// filter
 	count = 0
-	for v := range sef {
+	for _, v := range sef {
 		if (samf & v) != 0 {
 			count++
 			if count == 1 {
-				filters = v
+				filter = v
 			} else {
-				filters = filters | v
+				filter = filter | v
 			}
 		}
 	}
-	if count > 9 {
-		filters = 0
+	if count > 9 || count == 0 {
+		filter = 0
+	}
+	// zero
+	if sa == 0 || filter == 0 {
+		sa = 0
+		filter = 0
 	}
 	return
 }
 
-func pressed(samf int, i int) bool {
-	// if i == nil {
-	// 	return false
-	// }
-	return (samf & i) != 0
-}
+// func pressed(samf int, i int) bool {
+// 	// if i == nil {
+// 	// 	return false
+// 	// }
+// 	return (samf & i) != 0
+// }
 
-// sexfrom returns sex from samf
-func sexfrom(samf int) int {
-	var s int
-	n := (samf & sn) != 0 // is sn
-	m := (samf & sm) != 0 // is sm
-	f := (samf & sf) != 0 // is sf
-	if n || (m && n) {
-		s = sn
-	} else if m {
-		s = sm
-	} else if f {
-		s = sf
-	} else {
-		s = sn
-	}
-	return s
-}
+// // sexfrom returns sex from samf
+// func sexfrom(samf int) int {
+// 	var s int
+// 	n := (samf & sn) != 0 // is sn
+// 	m := (samf & sm) != 0 // is sm
+// 	f := (samf & sf) != 0 // is sf
+// 	if n || (m && n) {
+// 		s = sn
+// 	} else if m {
+// 		s = sm
+// 	} else if f {
+// 		s = sf
+// 	} else {
+// 		s = sn
+// 	}
+// 	return s
+// }
 
-func sexFromSamf(samf int) string {
-	s := decode(sn)
-	for i := 0; i < len(ses); i++ {
-		if pressed(samf, ses[i]) {
-			s = decode(ses[i])
-			break
-		}
-	}
-	return s
-}
+// func sexFromSamf(samf int) string {
+// 	s := decode(sn)
+// 	for i := 0; i < len(ses); i++ {
+// 		if pressed(samf, ses[i]) {
+// 			s = decode(ses[i])
+// 			break
+// 		}
+// 	}
+// 	return s
+// }
 
-func ageFromSamf(samf int) string {
-	a := decode(an)
-	for i := 0; i < len(sea); i++ {
-		if pressed(samf, sea[i]) {
-			a = decode(sea[i])
-			break
-		}
-	}
-	return a
-}
+// func ageFromSamf(samf int) string {
+// 	a := decode(an)
+// 	for i := 0; i < len(sea); i++ {
+// 		if pressed(samf, sea[i]) {
+// 			a = decode(sea[i])
+// 			break
+// 		}
+// 	}
+// 	return a
+// }
 
-/// Извлекает s и a из samf
-func saFromSamf(samf int) string {
-	s := decode(sn)
-	a := decode(an)
-	sa := "nn"
-	for i := 0; i < len(ses); i++ {
-		if pressed(samf, ses[i]) {
-			s = decode(ses[i])
-			break
-		}
-	}
-	for i := 0; i < len(sea); i++ {
-		if pressed(samf, sea[i]) {
-			a = decode(sea[i])
-			break
-		}
-	}
-	if s == "n" || a == "n" {
-		sa = "nn"
-	} else {
-		sa = s + a
-	}
-	return sa
-}
+// /// Извлекает s и a из samf
+// func saFromSamf(samf int) string {
+// 	s := decode(sn)
+// 	a := decode(an)
+// 	sa := "nn"
+// 	for i := 0; i < len(ses); i++ {
+// 		if pressed(samf, ses[i]) {
+// 			s = decode(ses[i])
+// 			break
+// 		}
+// 	}
+// 	for i := 0; i < len(sea); i++ {
+// 		if pressed(samf, sea[i]) {
+// 			a = decode(sea[i])
+// 			break
+// 		}
+// 	}
+// 	if s == "n" || a == "n" {
+// 		sa = "nn"
+// 	} else {
+// 		sa = s + a
+// 	}
+// 	return sa
+// }
 
-/// Извлекает все f из samf
-func mfFromSamf(samf int) []string {
-	f := []string{}
-	for i := 0; i < len(sem); i++ {
-		if pressed(samf, sem[i]) {
-			f = append(f, decode(sem[i]))
-		}
-	}
-	for i := 0; i < len(sef); i++ {
-		if pressed(samf, sef[i]) {
-			f = append(f, decode(sef[i]))
-		}
-	}
-	return f
-}
+// /// Извлекает все f из samf
+// func mfFromSamf(samf int) []string {
+// 	f := []string{}
+// 	for i := 0; i < len(sem); i++ {
+// 		if pressed(samf, sem[i]) {
+// 			f = append(f, decode(sem[i]))
+// 		}
+// 	}
+// 	for i := 0; i < len(sef); i++ {
+// 		if pressed(samf, sef[i]) {
+// 			f = append(f, decode(sef[i]))
+// 		}
+// 	}
+// 	return f
+// }
 
-/// Возвращает строку значений всех фильтров
-func filtersFromSamf(samf int) string {
-	e := "--"
-	f := make([]string, 5)
-	for i := range sem {
-		if pressed(samf, sem[i]) {
-			f = append(f, decode(sem[i]))
-		} else {
-			f = append(f, e)
-		}
-	}
-	// for i := 0; i < len(sef); i++ {
-	for i := range sef {
-		if pressed(samf, sef[i]) {
-			f = append(f, decode(sef[i]))
-		} else {
-			f = append(f, e)
-		}
-	}
-	return strings.Join(f, ",")
-}
+// /// Возвращает строку значений всех фильтров
+// func filtersFromSamf(samf int) string {
+// 	e := "--"
+// 	f := make([]string, 5)
+// 	for i := range sem {
+// 		if pressed(samf, sem[i]) {
+// 			f = append(f, decode(sem[i]))
+// 		} else {
+// 			f = append(f, e)
+// 		}
+// 	}
+// 	// for i := 0; i < len(sef); i++ {
+// 	for i := range sef {
+// 		if pressed(samf, sef[i]) {
+// 			f = append(f, decode(sef[i]))
+// 		} else {
+// 			f = append(f, e)
+// 		}
+// 	}
+// 	return strings.Join(f, ",")
+// }
 
-func decode(digit int) string {
-	return es[digit]
-}
+// func decode(digit int) string {
+// 	return es[digit]
+// }
 
-func chats(samf int) []string {
-	sa := saFromSamf(samf)
-	chs := make([]string, 5)
-	if sa != "nn" {
-		filters := mfFromSamf(samf)
-		for _, f := range filters {
-			chs = append(chs, sa+f)
-		}
-	}
-	if len(chs) == 0 {
-		chs = append(chs, "nnnn")
-	}
-	return chs
-}
+// func chats(samf int) []string {
+// 	sa := saFromSamf(samf)
+// 	chs := make([]string, 5)
+// 	if sa != "nn" {
+// 		filters := mfFromSamf(samf)
+// 		for _, f := range filters {
+// 			chs = append(chs, sa+f)
+// 		}
+// 	}
+// 	if len(chs) == 0 {
+// 		chs = append(chs, "nnnn")
+// 	}
+// 	return chs
+// }
 
-func mirror(chat string) string {
-	if len(chat) != 4 {
-		return "nnnn"
-	}
-	return chat[2:] + chat[:2]
-}
+// func mirror(chat string) string {
+// 	if len(chat) != 4 {
+// 		return "nnnn"
+// 	}
+// 	return chat[2:] + chat[:2]
+// }
 
-func underchats(chs []string) []string {
-	uchs := make([]string, 5)
-	for _, chat := range chs {
-		uchs = append(uchs, mirror(chat))
-	}
-	if len(uchs) == 0 {
-		uchs = append(uchs, "nnnn")
-	}
-	return uchs
-}
+// func underchats(chs []string) []string {
+// 	uchs := make([]string, 5)
+// 	for _, chat := range chs {
+// 		uchs = append(uchs, mirror(chat))
+// 	}
+// 	if len(uchs) == 0 {
+// 		uchs = append(uchs, "nnnn")
+// 	}
+// 	return uchs
+// }
