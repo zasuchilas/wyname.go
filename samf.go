@@ -48,12 +48,16 @@ func pressed(samf int, i int) bool {
 // sexfrom returns sex from samf
 func sexfrom(samf int) int {
 	var s int
-	switch {
-	case samf&sf != 0:
-		s = sf
-	case samf&sm != 0:
+	n := (samf & sn) != 0 // is sn
+	m := (samf & sm) != 0 // is sm
+	f := (samf & sf) != 0 // is sf
+	if n || (m && n) {
+		s = sn
+	} else if m {
 		s = sm
-	default:
+	} else if f {
+		s = sf
+	} else {
 		s = sn
 	}
 	return s
