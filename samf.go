@@ -34,9 +34,58 @@ var es = map[int]string{sn: "n", sm: "m", sf: "f", an: "n", aa: "a", ab: "b", ac
 var (
 	ses = []int{sn, sm, sf}
 	sea = []int{an, aa, ab, ac, ad, ae, af}
-	sem = []int{ma, mb, mc, md, me, mf}
-	sef = []int{fa, fb, fc, fd, fe, ff}
+	sef = []int{ma, mb, mc, md, me, mf, fa, fb, fc, fd, fe, ff}
+	// sem = []int{ma, mb, mc, md, me, mf}
+	// sef = []int{fa, fb, fc, fd, fe, ff}
 )
+
+// desamf parses the samf
+func desamf(samf int) (sex int, age int, sa int, filters int) {
+	var count int
+	// sex
+	for v := range ses {
+		if (samf & v) != 0 {
+			count++
+			sex = v
+		}
+	}
+	if count > 1 || count == 0 {
+		sex = sn
+	}
+	// age
+	count = 0
+	for v := range sea {
+		if (samf & v) != 0 {
+			count++
+			age = v
+		}
+	}
+	if count > 1 || count == 0 {
+		age = an
+	}
+	// sa
+	if sex == sn || age == an {
+		sa = 0
+	} else {
+		sa = sex | age
+	}
+	// filter
+	count = 0
+	for v := range sef {
+		if (samf & v) != 0 {
+			count++
+			if count == 1 {
+				filters = v
+			} else {
+				filters = filters | v
+			}
+		}
+	}
+	if count > 9 {
+		filters = 0
+	}
+	return
+}
 
 func pressed(samf int, i int) bool {
 	// if i == nil {
