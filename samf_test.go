@@ -84,6 +84,7 @@ var chattests = []chatpair{
 	{fc, fc | md, fc, fc | fd, true},
 	{mc, fc | fd, fc, fc | fd, false},
 	{md, fc | fd, fc, mc | md, true},
+	{fd, fc | md, fc, fc | fd, true},
 }
 
 func TestChat(t *testing.T) {
