@@ -25,18 +25,10 @@ const (
 	ff = 2097152 // 22
 )
 
-var se = map[string]int{"sn": sn, "sm": sm, "sf": sf, "an": an, "aa": aa, "ab": ab, "ac": ac, "ad": ad, "ae": ae, "af": af, "ma": ma, "mb": mb, "mc": mc, "md": md, "me": me, "mf": mf, "fa": fa, "fb": fb, "fc": fc, "fd": fd, "fe": fe, "ff": ff}
-
-var es = map[int]string{sn: "n", sm: "m", sf: "f", an: "n", aa: "a", ab: "b", ac: "c", ad: "d", ae: "e", af: "f", ma: "ma", mb: "mb", mc: "mc", md: "md", me: "me", mf: "mf", fa: "fa", fb: "fb", fc: "fc", fd: "fd", fe: "fe", ff: "ff"}
-
 var (
 	ses = []int{sn, sm, sf}
 	sea = []int{an, aa, ab, ac, ad, ae, af}
 	sef = []int{ma, mb, mc, md, me, mf, fa, fb, fc, fd, fe, ff}
-	// ses = []int{sn, sm, sf}
-	// sea = []int{an, aa, ab, ac, ad, ae, af}
-	// sem = []int{ma, mb, mc, md, me, mf}
-	// sef = []int{fa, fb, fc, fd, fe, ff}
 )
 
 // desamf parses the samf
@@ -67,7 +59,33 @@ func desamf(samf int) (sex int, age int, sa int, filter int) {
 	if sex == sn || age == an {
 		sa = 0
 	} else {
-		sa = sex | age
+		// sa = sex | age -> filters representation
+		switch {
+		case sex == sm && age == aa:
+			sa = ma
+		case sex == sm && age == ab:
+			sa = mb
+		case sex == sm && age == ac:
+			sa = mc
+		case sex == sm && age == ad:
+			sa = md
+		case sex == sm && age == ae:
+			sa = me
+		case sex == sm && age == af:
+			sa = mf
+		case sex == sf && age == aa:
+			sa = fa
+		case sex == sf && age == ab:
+			sa = fb
+		case sex == sf && age == ac:
+			sa = fc
+		case sex == sf && age == ad:
+			sa = fd
+		case sex == sf && age == ae:
+			sa = fe
+		case sex == sf && age == af:
+			sa = ff
+		}
 	}
 	// filter
 	count = 0
@@ -88,6 +106,26 @@ func desamf(samf int) (sex int, age int, sa int, filter int) {
 	if sa == 0 || filter == 0 {
 		sa = 0
 		filter = 0
+	}
+	return
+}
+
+// chat calculates the intersection of lifers and return true if yes
+func chat(sa1 int, f1 int, sa2 int, f2 int) (intersect bool) {
+	// zero
+	if sa1 == 0 || sa2 == 0 {
+		if sa1 == 0 && sa2 == 0 {
+			intersect = true
+		} else {
+			intersect = false
+		}
+		return
+	}
+	// non zero
+	if ((sa1 & f2) != 0) && ((f1 & sa2) != 0) {
+		intersect = true
+	} else {
+		intersect = false
 	}
 	return
 }
