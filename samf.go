@@ -130,6 +130,19 @@ func chat(sa1 int, f1 int, sa2 int, f2 int) (intersect bool) {
 	return
 }
 
+// marking returns mark by sex
+func marking(sex int) (mark string) {
+	switch sex {
+	case sf:
+		mark = "0"
+	case sm:
+		mark = "1"
+	default:
+		mark = "6"
+	}
+	return
+}
+
 // func pressed(samf int, i int) bool {
 // 	// if i == nil {
 // 	// 	return false
