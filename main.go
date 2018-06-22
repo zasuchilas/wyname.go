@@ -35,8 +35,6 @@ func serveAll(w http.ResponseWriter, r *http.Request) {
 		} else {
 			// security path
 			// ...
-			// -> log
-			// log.Println("RemoteAddr:", r.RemoteAddr, "host:", r.Host, "Cookies:", r.Cookies(), "UserAgent:", r.UserAgent(), "Sec-WebSocket-Key:", r.Header.Get("Sec-WebSocket-Key"), "TLS:", r.TLS)
 			serveWs(w, r)
 		}
 	} else {
