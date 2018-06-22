@@ -32,7 +32,7 @@ var (
 )
 
 // desamf parses the samf
-func desamf(samf int) (sex int, age int, sa int, filter int) {
+func desamf(samf int) (sex int, age int, sa int, filter int, mark string) {
 	var count int
 	// sex
 	for _, v := range ses {
@@ -107,6 +107,17 @@ func desamf(samf int) (sex int, age int, sa int, filter int) {
 		sa = 0
 		filter = 0
 	}
+	// mark
+	switch {
+	case sa == 0 || filter == 0:
+		mark = "6"
+	case sex == sf:
+		mark = "0"
+	case sex == sm:
+		mark = "1"
+	default:
+		mark = "6"
+	}
 	return
 }
 
@@ -126,19 +137,6 @@ func chat(sa1 int, f1 int, sa2 int, f2 int) (intersect bool) {
 		intersect = true
 	} else {
 		intersect = false
-	}
-	return
-}
-
-// marking returns mark by sex
-func marking(sex int) (mark string) {
-	switch sex {
-	case sf:
-		mark = "0"
-	case sm:
-		mark = "1"
-	default:
-		mark = "6"
 	}
 	return
 }
