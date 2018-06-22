@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -28,10 +29,23 @@ type Lifer struct {
 	// sector
 	// subscription
 	hash string
-	conn *websocket.Conn // websocket connection
 
-	// buffered channel of outbound messages
-	send chan []byte
+	conn *websocket.Conn // websocket connection
+	send chan []byte     // buffered channel of outbound messages
+
+	// insecur bool
+	initsamf bool
+	initgps  bool
+	started  bool
+
+	samf   int
+	sex    int
+	age    int
+	sa     int
+	filter int
+	mark   string
+
+	gps *Gps
 }
 
 // reading from websocket
@@ -57,17 +71,65 @@ func (l *Lifer) read() {
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		// inbox from browser
-		inbox := strings.Split(string(message), ",")
-		log.Println("inbox len", len(inbox))
-		if len(inbox) > 0 {
-			log.Println(inbox)
-			switch inbox[0] {
+		inb := strings.Split(string(message), ",")
+		len := len(inb)
+		if len > 0 {
+			switch inb[0] {
 			case codeStatsRequest:
 				st := statget()
-				log.Println(codeStatsResponse + "," + st)
 				l.send <- []byte(codeStatsResponse + "," + st)
+			case codeSamf:
+				if len == 2 {
+					inbsamf, e := strconv.Atoi(inb[1])
+					if e == nil && inbsamf != l.samf {
+						l.samf = inbsamf
+						l.sex, l.age, l.sa, l.filter, l.mark = desamf(inbsamf)
+						if l.started {
+							// reconnect
+
+						} else {
+							l.initsamf = true
+							if l.initgps == true {
+								// connect first
+
+							}
+						}
+					}
+				}
+			case codeGpsData:
+				if len == 3 {
+					inbla, ela := strconv.ParseFloat(inb[1], 64)
+					inblo, elo := strconv.ParseFloat(inb[2], 64)
+					if ela == nil && elo == nil && (inbla != l.gps.lat || inblo != l.gps.lon) {
+						g, e := newGps(inbla, inblo)
+						if e == nil {
+							l.gps = g
+							if l.started {
+								// move
+
+							} else {
+								l.initgps = true
+								if l.initsamf == true {
+									// connect first
+
+								}
+							}
+						}
+					}
+				}
+			case codeGlobRequest:
+				if len == 5 {
+					tala, etala := strconv.ParseFloat(inb[1], 64)
+					talo, etalo := strconv.ParseFloat(inb[2], 64)
+					tcla, etcla := strconv.ParseFloat(inb[3], 64)
+					tclo, etclo := strconv.ParseFloat(inb[4], 64)
+					if etala == nil && etalo == nil && etcla == nil && etclo == nil {
+						log.Println(tala, talo, tcla, tclo)
+
+					}
+				}
 			default:
-				l.send <- []byte("18," + string(message))
+				// l.send <- []byte("18," + string(message))
 				// c.hub.broadcast <- message
 			}
 		}
@@ -130,9 +192,12 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	lifer := &Lifer{
-		hash: fmt.Sprint(&conn)[2:],
-		conn: conn,
-		send: make(chan []byte, 256),
+		hash:     fmt.Sprint(&conn)[2:],
+		conn:     conn,
+		send:     make(chan []byte, 256),
+		initsamf: false,
+		initgps:  false,
+		started:  false,
 	}
 
 	statplus()
