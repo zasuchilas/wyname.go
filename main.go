@@ -9,7 +9,10 @@ import (
 	"sync/atomic"
 )
 
-var addr = flag.String("addr", ":6970", "http service address")
+var (
+	org  = flag.String("org", "https://localhost:6969", "http service address")
+	addr = flag.String("addr", ":6970", "ws service address")
+)
 
 // go run main.go --addr="whatsyourna.me:8888"
 
@@ -27,15 +30,13 @@ func main() {
 
 func serveAll(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Upgrade") == "websocket" {
-		// TODO проверить Origin
-		// log.Print("host:", r.Host, "\n")
-		// log.Print("RemoteAddr:", r.RemoteAddr, "\n")
-		// if utf8.RuneCountInString(r.URL.Path) == 65 { // все равное origin проверять
 		if r.URL.Path == "/sync" {
 			synchronize(w, r)
 		} else {
-			// } else if utf8.RuneCountInString(r.URL.Path) > 60 { // все равное origin проверять
-			// TODO точно ли / + 64 hmac всегда
+			// security path
+			// ...
+			// -> log
+			// log.Println("RemoteAddr:", r.RemoteAddr, "host:", r.Host, "Cookies:", r.Cookies(), "UserAgent:", r.UserAgent(), "Sec-WebSocket-Key:", r.Header.Get("Sec-WebSocket-Key"), "TLS:", r.TLS)
 			serveWs(w, r)
 		}
 	} else {
