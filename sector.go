@@ -13,8 +13,8 @@ type Sector struct {
 
 func newsector() *Sector {
 	return &Sector{
-		members:   make(map[*Lifer]bool, 200),
-		subscrs:   make(map[*Lifer]bool, 300),
+		members:   make(map[*Lifer]bool, 500),
+		subscrs:   make(map[*Lifer]bool, 500),
 		broadcast: make(chan job),
 	}
 }
@@ -22,10 +22,14 @@ func newsector() *Sector {
 func (s *Sector) run() {
 	for {
 		select {
-		case inbjob := <-s.broadcast:
-			switch inbjob.(type) {
+		case inbound := <-s.broadcast:
+			switch inbound.(type) {
 			case *comejob:
 				log.Println("comejob")
+				newComeJob, err := inbound.(*comejob)
+				if err == false {
+					s.members[newComeJob.lifer] = true
+				}
 			case *awayjob:
 				log.Println("awayjob")
 			}
