@@ -33,10 +33,10 @@ type Lifer struct {
 	conn *websocket.Conn // websocket connection
 	send chan []byte     // buffered channel of outbound messages
 
-	// insecur bool
 	initsamf bool
 	initgps  bool
 	started  bool
+	// insecur bool
 
 	samf   int
 	sex    int
@@ -46,6 +46,12 @@ type Lifer struct {
 	mark   string
 
 	gps *Gps
+
+	secache map[string]*Sector // lifers cache of *Sectors
+	cmember string             // current lifer member sector
+	csubscr map[string]bool    // current lifer subscribe sectors
+	nmember string             // new inbound lifer member sector
+	nsubscr map[string]bool    // new inbound lifersubsribe sectors
 }
 
 // reading from websocket
@@ -55,6 +61,7 @@ func (l *Lifer) read() {
 		log.Println("defer read", l.hash)
 		l.conn.Close() // закрываем соединение websockets
 		statminus()
+		// away func
 	}()
 
 	l.conn.SetReadLimit(maxMessageSize)
@@ -104,14 +111,29 @@ func (l *Lifer) read() {
 						g, e := newGps(inbla, inblo)
 						if e == nil {
 							l.gps = g
-							if l.started {
-								// move
+							l.nmember, l.nsubscr, e = l.gps.calculate() // new member and subscribe sectors
+							if e == nil {
+								//
+								if l.started {
+									// move
 
-							} else {
-								l.initgps = true
-								if l.initsamf == true {
-									// connect first
+									// проверить не изменился ли набор секторов
+									// for _, sec := range secs {
+									// 	// camp.sector(sec) RMUTEX
+									// 	// проверить не изменился ли набор секторов
+									// 	log.Println(sec)
 
+									// }
+								} else {
+									l.initgps = true
+									if l.initsamf == true {
+										// connect first -> l.started = true
+										l.cmember = l.nmember
+										memsec := camp.sector(l.cmember)
+										l.secache[l.cmember] = memsec
+										memsec.broadcast <- newcomejob(l)
+										l.csubscr = l.nsubscr
+									}
 								}
 							}
 						}

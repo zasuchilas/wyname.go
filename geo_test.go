@@ -86,3 +86,11 @@ func TestCompute(t *testing.T) {
 	secs, _ := yar.compute()
 	t.Error(secs)
 }
+
+func TestCalculate(t *testing.T) {
+	yarplace := [2]float64{57.626569, 39.893787}
+	yar, _ := newGps(yarplace[0], yarplace[1])
+	m, a, _ := yar.calculate()
+	t.Error("membersec", m)
+	t.Error("allsectors", a)
+}

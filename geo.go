@@ -179,3 +179,35 @@ func (g *Gps) sectornums() (lat int, lon int) {
 	lon = int(math.Ceil(g.lon * 100))
 	return
 }
+
+// Вычислить все секторы
+// [0] member sector
+func (g *Gps) calculate() (membersec string, allsectors map[string]bool, err error) {
+	// main sector isec (Iam)
+	ila, ilo := g.sectornums()
+	membersec = strconv.Itoa(ila) + ":" + strconv.Itoa(ilo)
+	// isec := strconv.Itoa(ila) + ":" + strconv.Itoa(ilo)
+
+	// нужно вычислить точки A и C
+	north, east := g.dist589()
+	a, err := newGps(g.lat-north, g.lon-east)
+	if err != nil {
+		err = fmt.Errorf("failed to create point A")
+	}
+	c, err := newGps(g.lat+north, g.lon+east)
+	if err != nil {
+		err = fmt.Errorf("failed to create point C")
+	}
+	ala, alo := a.sectornums()
+	cla, clo := c.sectornums()
+	cap := (cla - ala + 1) * (clo - alo + 1) // TODO test this with different placies & 180
+	allsectors = make(map[string]bool, cap)
+	var n string
+	for i := ala; i <= cla; i++ {
+		for j := alo; j <= clo; j++ {
+			n = strconv.Itoa(i) + ":" + strconv.Itoa(j)
+			allsectors[n] = true
+		}
+	}
+	return
+}

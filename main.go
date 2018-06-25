@@ -12,12 +12,15 @@ import (
 var (
 	org  = flag.String("org", "https://localhost:6969", "http service address")
 	addr = flag.String("addr", ":6970", "ws service address")
+	camp *Camp
 )
 
 // go run main.go --addr="whatsyourna.me:8888"
 
 func main() {
 	flag.Parse()
+
+	camp = newcamp()
 
 	http.HandleFunc("/", serveAll)
 
