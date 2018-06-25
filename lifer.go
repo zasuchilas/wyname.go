@@ -62,11 +62,14 @@ type Lifer struct {
 // reading from websocket
 func (l *Lifer) read() {
 	defer func() {
-		// l.sector.unregister <- l
-		log.Println("defer read", l.hash)
 		l.conn.Close() // закрываем соединение websockets
 		statminus()
 		// away func
+		if l.cmember != "" {
+			if awaySector, found := l.secache[l.cmember]; found {
+				awaySector.broadcast <- newawayjob(l)
+			}
+		}
 		// -> log : part, hash, samf, sex, age, lat, lon
 		log.Println("C," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
 	}()
@@ -240,6 +243,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		initsamf: false,
 		initgps:  false,
 		started:  false,
+		secache:  make(map[string]*Sector, 21),
 	}
 
 	statplus()
