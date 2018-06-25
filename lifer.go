@@ -47,6 +47,11 @@ type Lifer struct {
 
 	gps *Gps
 
+	// text represantations for logs
+	inboundLat  string
+	inboundLon  string
+	inboundSamf string
+
 	secache map[string]*Sector // lifers cache of *Sectors
 	cmember string             // current lifer member sector
 	csubscr map[string]bool    // current lifer subscribe sectors
@@ -62,6 +67,8 @@ func (l *Lifer) read() {
 		l.conn.Close() // закрываем соединение websockets
 		statminus()
 		// away func
+		// -> log : part, hash, samf, sex, age, lat, lon
+		log.Println("C," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
 	}()
 
 	l.conn.SetReadLimit(maxMessageSize)
@@ -90,6 +97,7 @@ func (l *Lifer) read() {
 					inbsamf, e := strconv.Atoi(inb[1])
 					if e == nil && inbsamf != l.samf {
 						l.samf = inbsamf
+						l.inboundSamf = inb[1]
 						l.sex, l.age, l.sa, l.filter, l.mark = desamf(inbsamf)
 						if l.started {
 							// reconnect
@@ -111,9 +119,17 @@ func (l *Lifer) read() {
 						g, e := newGps(inbla, inblo)
 						if e == nil {
 							l.gps = g
-							l.nmember, l.nsubscr, e = l.gps.calculate() // new member and subscribe sectors
+							l.inboundLat = inb[1]
+							l.inboundLon = inb[2]
+							nmember, nsubscr, e := l.gps.calculate() // new member and subscribe sectors
 							if e == nil {
-								//
+								// secache update
+								for subsc := range nsubscr {
+									if _, found := l.secache[subsc]; !found {
+										l.secache[subsc] = camp.sector(subsc)
+									}
+								}
+
 								if l.started {
 									// move
 
@@ -125,14 +141,18 @@ func (l *Lifer) read() {
 
 									// }
 								} else {
+									l.cmember = nmember
+									l.csubscr = nsubscr
 									l.initgps = true
 									if l.initsamf == true {
 										// connect first -> l.started = true
-										l.cmember = l.nmember
-										memsec := camp.sector(l.cmember)
-										l.secache[l.cmember] = memsec
-										memsec.broadcast <- newcomejob(l)
-										l.csubscr = l.nsubscr
+										l.secache[l.cmember].broadcast <- newcomejob(l)
+										for secname := range l.csubscr {
+											l.secache[secname].broadcast <- newSubscribeJob(l)
+										}
+										l.started = true
+										// -> log : part, hash, samf, sex, age, lat, lon
+										log.Println("B," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
 									}
 								}
 							}

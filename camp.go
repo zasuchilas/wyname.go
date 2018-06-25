@@ -29,7 +29,7 @@ func (c *Camp) sector(name string) *Sector {
 		s2, found := c.sectors[name]
 		if found == false {
 			c.sectors[name] = s
-			s.run() // run new sector
+			go s.run() // run new sector
 		} else {
 			s = s2
 		}

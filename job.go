@@ -11,7 +11,7 @@ type comejob struct {
 }
 
 func (j *comejob) code() int {
-	return codeCome
+	return 1
 }
 
 func newcomejob(l *Lifer) *comejob {
@@ -27,11 +27,27 @@ type awayjob struct {
 }
 
 func (j *awayjob) code() int {
-	return codeAway
+	return 1
 }
 
 func newawayjob(l *Lifer) *awayjob {
 	return &awayjob{
+		lifer: l,
+	}
+}
+
+// subscribe
+
+type jobSubscribe struct {
+	lifer *Lifer // lifer for subsribe in sector
+}
+
+func (j *jobSubscribe) code() int {
+	return 1
+}
+
+func newSubscribeJob(l *Lifer) *jobSubscribe {
+	return &jobSubscribe{
 		lifer: l,
 	}
 }

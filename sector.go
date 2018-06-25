@@ -29,9 +29,17 @@ func (s *Sector) run() {
 				newComeJob, err := inbound.(*comejob)
 				if err == false {
 					s.members[newComeJob.lifer] = true
+					// notify subscribers
 				}
 			case *awayjob:
 				log.Println("awayjob")
+				newAwayJob, err := inbound.(*awayjob)
+				if err == false {
+					delete(s.members, newAwayJob.lifer)
+					// notify subscribers
+				}
+			case *jobSubscribe:
+
 			}
 		}
 	}
