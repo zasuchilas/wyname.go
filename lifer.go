@@ -64,20 +64,8 @@ func (l *Lifer) read() {
 	defer func() {
 		l.conn.Close() // закрываем соединение websockets
 		statminus()
-		// away func
-		if l.cmember != "" {
-			if awaySector, found := l.secache[l.cmember]; found {
-				awaySector.broadcast <- newawayjob(l)
-			}
-		}
-		if len(l.csubscr) > 0 {
-			awayUnsubscrJob := newUnsubscribeJob(l)
-			for awayname := range l.csubscr {
-				if awaySubs, found := l.secache[awayname]; found {
-					awaySubs.broadcast <- awayUnsubscrJob
-				}
-			}
-		}
+		l.awayFromMembers()
+		l.unsubscribeEverywhere()
 		// -> log : part, hash, samf, sex, age, lat, lon
 		log.Println("C," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
 	}()
