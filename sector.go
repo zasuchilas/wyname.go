@@ -39,7 +39,18 @@ func (s *Sector) run() {
 					// notify subscribers
 				}
 			case *jobSubscribe:
-
+				log.Println("jobSubscribe")
+				newSubscrJob, err := inbound.(*jobSubscribe)
+				if err == false {
+					s.subscrs[newSubscrJob.lifer] = true
+					// get package
+				}
+			case *jobUnsubscribe:
+				log.Println("jobUnsubscribe")
+				newUnsubscribeJob, err := inbound.(*jobUnsubscribe)
+				if err == false {
+					delete(s.subscrs, newUnsubscribeJob.lifer)
+				}
 			}
 		}
 	}

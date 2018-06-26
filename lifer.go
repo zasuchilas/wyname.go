@@ -70,6 +70,14 @@ func (l *Lifer) read() {
 				awaySector.broadcast <- newawayjob(l)
 			}
 		}
+		if len(l.csubscr) > 0 {
+			awayUnsubscrJob := newUnsubscribeJob(l)
+			for awayname := range l.csubscr {
+				if awaySubs, found := l.secache[awayname]; found {
+					awaySubs.broadcast <- awayUnsubscrJob
+				}
+			}
+		}
 		// -> log : part, hash, samf, sex, age, lat, lon
 		log.Println("C," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
 	}()

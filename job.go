@@ -52,4 +52,20 @@ func newSubscribeJob(l *Lifer) *jobSubscribe {
 	}
 }
 
+// unsubscribe
+
+type jobUnsubscribe struct {
+	lifer *Lifer // lifer for unsubscibe in sector
+}
+
+func (j *jobUnsubscribe) code() int {
+	return 1
+}
+
+func newUnsubscribeJob(l *Lifer) *jobUnsubscribe {
+	return &jobUnsubscribe{
+		lifer: l,
+	}
+}
+
 //
