@@ -116,8 +116,7 @@ func (l *Lifer) read() {
 						} else {
 							l.initsamf = true
 							if l.initgps == true {
-								// connect first
-
+								l.connectFirst()
 							}
 						}
 					}
@@ -156,14 +155,7 @@ func (l *Lifer) read() {
 									l.csubscr = nsubscr
 									l.initgps = true
 									if l.initsamf == true {
-										// connect first -> l.started = true
-										l.secache[l.cmember].broadcast <- newcomejob(l)
-										for secname := range l.csubscr {
-											l.secache[secname].broadcast <- newSubscribeJob(l)
-										}
-										l.started = true
-										// -> log : part, hash, samf, sex, age, lat, lon
-										log.Println("B," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
+										l.connectFirst() // connect first -> l.started = true and log B
 									}
 								}
 							}
