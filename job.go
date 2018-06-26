@@ -20,6 +20,22 @@ func createComeJob(l *Lifer) *jobCome {
 	}
 }
 
+// move
+
+type jobMove struct {
+	lifer *Lifer // lifer for add to sector members
+}
+
+func (j *jobMove) code() int {
+	return 1
+}
+
+func createMoveJob(l *Lifer) *jobMove {
+	return &jobMove{
+		lifer: l,
+	}
+}
+
 // away
 
 type jobAway struct {

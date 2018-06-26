@@ -30,9 +30,7 @@ type Lifer struct {
 	inboundLon  string
 	inboundSamf string
 
-	secache map[string]*Sector // lifers cache of *Sectors
-	cmember string             // current lifer member sector
-	csubscr map[string]bool    // current lifer subscribe sectors
-	nmember string             // new inbound lifer member sector
-	nsubscr map[string]bool    // new inbound lifersubsribe sectors
+	secache       map[string]*Sector // lifers cache of *Sectors
+	membership    string             // current lifer member sector
+	subscriptions map[string]bool    // current lifer subscribe sectors
 }

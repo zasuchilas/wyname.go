@@ -68,33 +68,44 @@ func (l *Lifer) read() {
 					if ela == nil && elo == nil && (inbla != l.gps.lat || inblo != l.gps.lon) {
 						g, e := newGps(inbla, inblo)
 						if e == nil {
-							nmember, nsubscr, e := g.calculate() // new member and subscribe sectors
+							membership, subscriptions, e := g.calculate() // new member and subscribe sectors
 							if e == nil {
 								// save new data
 								l.gps = g
 								l.inboundLat = inb[1]
 								l.inboundLon = inb[2]
 								// secache update
-								for subsc := range nsubscr {
+								for subsc := range subscriptions {
 									if _, found := l.secache[subsc]; !found {
 										l.secache[subsc] = camp.sector(subsc)
 									}
 								}
 								// further processing
 								if l.started { // if this is a continuation
-									// move
-
-									// проверить не изменился ли набор секторов
-									// for _, sec := range secs {
-									// 	// camp.sector(sec) RMUTEX
-									// 	// проверить не изменился ли набор секторов
-									// 	log.Println(sec)
-
-									// }
+									// notifications
+									if membership == l.membership { // move
+										l.secache[membership].broadcast <- createMoveJob(l)
+									} else { // change membership
+										l.awayFromMembers()
+										l.membership = membership
+										l.secache[membership].broadcast <- createComeJob(l)
+									}
+									// subscriptions
+									for oldSubscrSector := range l.subscriptions { // remove needless subscriptions
+										if _, found := subscriptions[oldSubscrSector]; !found {
+											l.secache[oldSubscrSector].broadcast <- createUnsubscribeJob(l)
+										}
+									}
+									for newSubscrSector := range subscriptions { // add new subscriptions
+										if _, found := l.subscriptions[newSubscrSector]; !found {
+											l.secache[newSubscrSector].broadcast <- createSubscribeJob(l)
+										}
+									}
+									l.subscriptions = subscriptions
 								} else { // if this is the beginning
 									// save additional data
-									l.cmember = nmember
-									l.csubscr = nsubscr
+									l.membership = membership
+									l.subscriptions = subscriptions
 									l.initgps = true
 									if l.initsamf == true { // if all data is ready
 										l.connectFirst() // connect first -> l.started = true

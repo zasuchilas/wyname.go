@@ -7,8 +7,8 @@ import (
 
 // connectFirst connect first and l.started = true and log B
 func (l *Lifer) connectFirst() {
-	l.secache[l.cmember].broadcast <- createComeJob(l)
-	for secname := range l.csubscr {
+	l.secache[l.membership].broadcast <- createComeJob(l)
+	for secname := range l.subscriptions {
 		l.secache[secname].broadcast <- createSubscribeJob(l)
 	}
 	l.started = true
@@ -16,8 +16,8 @@ func (l *Lifer) connectFirst() {
 
 // awayFromMembers removes lifer from members in his sector
 func (l *Lifer) awayFromMembers() {
-	if l.cmember != "" {
-		if awaySector, found := l.secache[l.cmember]; found {
+	if l.membership != "" {
+		if awaySector, found := l.secache[l.membership]; found {
 			awaySector.broadcast <- createAwayJob(l)
 		}
 	}
@@ -25,9 +25,9 @@ func (l *Lifer) awayFromMembers() {
 
 // unsubscribeEverywhere removes all subscribtions in sectors
 func (l *Lifer) unsubscribeEverywhere() {
-	if len(l.csubscr) > 0 {
+	if len(l.subscriptions) > 0 {
 		awayUnsubscrJob := createUnsubscribeJob(l)
-		for awayname := range l.csubscr {
+		for awayname := range l.subscriptions {
 			if awaySubs, found := l.secache[awayname]; found {
 				awaySubs.broadcast <- awayUnsubscrJob
 			}
