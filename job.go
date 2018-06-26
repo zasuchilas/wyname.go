@@ -6,32 +6,32 @@ type job interface {
 
 // come
 
-type comejob struct {
+type jobCome struct {
 	lifer *Lifer // lifer for add to sector members
 }
 
-func (j *comejob) code() int {
+func (j *jobCome) code() int {
 	return 1
 }
 
-func newcomejob(l *Lifer) *comejob {
-	return &comejob{
+func createComeJob(l *Lifer) *jobCome {
+	return &jobCome{
 		lifer: l,
 	}
 }
 
 // away
 
-type awayjob struct {
+type jobAway struct {
 	lifer *Lifer // lifer for remove
 }
 
-func (j *awayjob) code() int {
+func (j *jobAway) code() int {
 	return 1
 }
 
-func newawayjob(l *Lifer) *awayjob {
-	return &awayjob{
+func createAwayJob(l *Lifer) *jobAway {
+	return &jobAway{
 		lifer: l,
 	}
 }
@@ -46,7 +46,7 @@ func (j *jobSubscribe) code() int {
 	return 1
 }
 
-func newSubscribeJob(l *Lifer) *jobSubscribe {
+func createSubscribeJob(l *Lifer) *jobSubscribe {
 	return &jobSubscribe{
 		lifer: l,
 	}
@@ -62,7 +62,7 @@ func (j *jobUnsubscribe) code() int {
 	return 1
 }
 
-func newUnsubscribeJob(l *Lifer) *jobUnsubscribe {
+func createUnsubscribeJob(l *Lifer) *jobUnsubscribe {
 	return &jobUnsubscribe{
 		lifer: l,
 	}

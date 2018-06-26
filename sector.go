@@ -24,16 +24,16 @@ func (s *Sector) run() {
 		select {
 		case inbound := <-s.broadcast:
 			switch inbound.(type) {
-			case *comejob:
+			case *jobCome:
 				log.Println("comejob")
-				newComeJob, err := inbound.(*comejob)
+				newComeJob, err := inbound.(*jobCome)
 				if err == false {
 					s.members[newComeJob.lifer] = true
 					// notify subscribers
 				}
-			case *awayjob:
+			case *jobAway:
 				log.Println("awayjob")
-				newAwayJob, err := inbound.(*awayjob)
+				newAwayJob, err := inbound.(*jobAway)
 				if err == false {
 					delete(s.members, newAwayJob.lifer)
 					// notify subscribers
