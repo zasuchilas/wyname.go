@@ -12,8 +12,6 @@ func (l *Lifer) connectFirst() {
 		l.secache[secname].broadcast <- createSubscribeJob(l)
 	}
 	l.started = true
-	// -> log : part, hash, samf, sex, age, lat, lon
-	log.Println("B," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
 }
 
 // awayFromMembers removes lifer from members in his sector
@@ -36,3 +34,27 @@ func (l *Lifer) unsubscribeEverywhere() {
 		}
 	}
 }
+
+func (l *Lifer) logB() {
+	// -> log : part, hash, samf, sex, age, lat, lon
+	log.Println("B," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
+}
+
+func (l *Lifer) logC() {
+	// -> log : part, hash, samf, sex, age, lat, lon
+	log.Println("C," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
+}
+
+func (l *Lifer) changeSamfData(inbsamf int, inbsamft string) {
+	l.samf = inbsamf
+	l.inboundSamf = inbsamft
+	l.sex, l.age, l.sa, l.filter, l.mark = desamf(inbsamf)
+}
+
+// clearCalculatedData clears the computed data (for reconnect with new calculating values)
+// func (l *Lifer) clearCalculatedData() {
+// 	l.cmember = ""
+// 	for k := range l.csubscr {
+// 		delete(l.csubscr, k)
+// 	}
+// }

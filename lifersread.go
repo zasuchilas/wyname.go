@@ -17,8 +17,7 @@ func (l *Lifer) read() {
 		statminus()
 		l.awayFromMembers()
 		l.unsubscribeEverywhere()
-		// -> log : part, hash, samf, sex, age, lat, lon
-		log.Println("C," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
+		l.logC()
 	}()
 
 	l.conn.SetReadLimit(maxMessageSize)
@@ -46,16 +45,18 @@ func (l *Lifer) read() {
 				if len == 2 {
 					inbsamf, e := strconv.Atoi(inb[1])
 					if e == nil && inbsamf != l.samf {
-						l.samf = inbsamf
-						l.inboundSamf = inb[1]
-						l.sex, l.age, l.sa, l.filter, l.mark = desamf(inbsamf)
 						if l.started {
 							// reconnect
-
+							l.awayFromMembers()               // delete membership
+							l.unsubscribeEverywhere()         // delete all subscribtions
+							l.changeSamfData(inbsamf, inb[1]) // ! change samf data
+							l.connectFirst()                  // connect with new samf data
 						} else {
+							l.changeSamfData(inbsamf, inb[1]) // ! change samf data
 							l.initsamf = true
 							if l.initgps == true {
 								l.connectFirst()
+								l.logB()
 							}
 						}
 					}
@@ -67,19 +68,20 @@ func (l *Lifer) read() {
 					if ela == nil && elo == nil && (inbla != l.gps.lat || inblo != l.gps.lon) {
 						g, e := newGps(inbla, inblo)
 						if e == nil {
-							l.gps = g
-							l.inboundLat = inb[1]
-							l.inboundLon = inb[2]
-							nmember, nsubscr, e := l.gps.calculate() // new member and subscribe sectors
+							nmember, nsubscr, e := g.calculate() // new member and subscribe sectors
 							if e == nil {
+								// save new data
+								l.gps = g
+								l.inboundLat = inb[1]
+								l.inboundLon = inb[2]
 								// secache update
 								for subsc := range nsubscr {
 									if _, found := l.secache[subsc]; !found {
 										l.secache[subsc] = camp.sector(subsc)
 									}
 								}
-
-								if l.started {
+								// further processing
+								if l.started { // if this is a continuation
 									// move
 
 									// проверить не изменился ли набор секторов
@@ -89,12 +91,14 @@ func (l *Lifer) read() {
 									// 	log.Println(sec)
 
 									// }
-								} else {
+								} else { // if this is the beginning
+									// save additional data
 									l.cmember = nmember
 									l.csubscr = nsubscr
 									l.initgps = true
-									if l.initsamf == true {
-										l.connectFirst() // connect first -> l.started = true and log B
+									if l.initsamf == true { // if all data is ready
+										l.connectFirst() // connect first -> l.started = true
+										l.logB()
 									}
 								}
 							}
