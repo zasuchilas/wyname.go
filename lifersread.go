@@ -127,9 +127,6 @@ func (l *Lifer) read() {
 
 					}
 				}
-			default:
-				// l.send <- []byte("18," + string(message))
-				// c.hub.broadcast <- message
 			}
 		}
 	}
