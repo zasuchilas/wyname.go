@@ -14,7 +14,7 @@ const (
 	codeSamf          = "18"
 	codeSettings      = 18
 	codeGpsData       = "20"
-	codeMove          = 30
+	codeMove          = "30"
 	codeRemove        = 32
 	codeRecount       = 37
 	codeSectorPackage = 38
