@@ -48,7 +48,7 @@ func (l *Lifer) logC() {
 func (l *Lifer) changeSamfData(inbsamf int, inbsamft string) {
 	l.samf = inbsamf
 	l.inboundSamf = inbsamft
-	l.sex, l.age, l.sa, l.filter, l.mark = desamf(inbsamf)
+	l.sex, l.age, l.sa, l.filter, l.filters, l.mark = desamf(inbsamf)
 }
 
 // clearCalculatedData clears the computed data (for reconnect with new calculating values)

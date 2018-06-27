@@ -8,21 +8,22 @@ import (
 // desamf
 
 type desamfpairs struct {
-	samf   int
-	sex    int
-	age    int
-	sa     int
-	filter int
-	mark   string
+	samf    int
+	sex     int
+	age     int
+	sa      int
+	filter  int
+	filters []int
+	mark    string
 }
 
 var desamftests = []desamfpairs{
-	{sn | ac | fc, sn, ac, 0, 0, "6"},
-	{sm, sm, an, 0, 0, "6"},
-	{sf | sn | fc, sn, an, 0, 0, "6"},
-	{sf | sm | ac | fc, sn, ac, 0, 0, "6"},
-	{sf | ac | fc, sf, ac, fc, fc, "0"},
-	{sf | ac | fc | fd, sf, ac, fc, fc | fd, "0"},
+	{sn | ac | fc, sn, ac, 0, 0, []int{0}, "6"},
+	{sm, sm, an, 0, 0, []int{0}, "6"},
+	{sf | sn | fc, sn, an, 0, 0, []int{0}, "6"},
+	{sf | sm | ac | fc, sn, ac, 0, 0, []int{0}, "6"},
+	{sf | ac | fc, sf, ac, fc, fc, []int{fc}, "0"},
+	{sf | ac | fc | fd, sf, ac, fc, fc | fd, []int{fc, fd}, "0"},
 }
 
 func TestDesamf(t *testing.T) {
@@ -30,7 +31,7 @@ func TestDesamf(t *testing.T) {
 	fmt.Println(sm)
 	fmt.Println(sf | sn | fc)
 	for _, pair := range desamftests {
-		s, a, sa, filter, m := desamf(pair.samf)
+		s, a, sa, filter, filters, m := desamf(pair.samf)
 		if s != pair.sex {
 			t.Error("For", pair.samf, "expected sex", pair.sex, "got", s)
 		}
@@ -43,6 +44,19 @@ func TestDesamf(t *testing.T) {
 		if filter != pair.filter {
 			t.Error("For", pair.samf, "expected filter", pair.filter, "got", filter)
 		}
+		filtersChecks := len(pair.filters)
+		for _, v := range filters {
+			for _, ev := range pair.filters {
+				if v == ev {
+					filtersChecks--
+					break
+				}
+			}
+		}
+		if filtersChecks != 0 {
+			t.Error("For", pair.samf, "expected filters", pair.filters, "got", filters)
+		}
+		// t.Error("filters", filters)
 		if m != pair.mark {
 			t.Error("For", pair.samf, "expected mark", pair.mark, "got", m)
 		}

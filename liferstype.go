@@ -16,12 +16,13 @@ type Lifer struct {
 	started  bool // is lifer already launched in sector
 	// insecur bool
 
-	samf   int
-	sex    int
-	age    int
-	sa     int
-	filter int
-	mark   string
+	samf    int
+	sex     int
+	age     int
+	sa      int
+	filter  int
+	filters []int
+	mark    string
 
 	gps *Gps
 

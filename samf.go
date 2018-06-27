@@ -32,7 +32,7 @@ var (
 )
 
 // desamf parses the samf
-func desamf(samf int) (sex int, age int, sa int, filter int, mark string) {
+func desamf(samf int) (sex int, age int, sa int, filter int, filters []int, mark string) {
 	var count int
 	// sex
 	for _, v := range ses {
@@ -89,8 +89,10 @@ func desamf(samf int) (sex int, age int, sa int, filter int, mark string) {
 	}
 	// filter
 	count = 0
+	// filters = make([]int, 13)
 	for _, v := range sef {
 		if (samf & v) != 0 {
+			filters = append(filters, v)
 			count++
 			if count == 1 {
 				filter = v
@@ -101,11 +103,13 @@ func desamf(samf int) (sex int, age int, sa int, filter int, mark string) {
 	}
 	if count > 9 || count == 0 {
 		filter = 0
+		filters = []int{0}
 	}
 	// zero
 	if sa == 0 || filter == 0 {
 		sa = 0
 		filter = 0
+		filters = []int{0}
 	}
 	// mark
 	switch {

@@ -37,7 +37,11 @@ func (s *Sector) run() {
 				newComeJob, err := inbound.(*jobCome)
 				if err == false {
 					s.members[newComeJob.lifer.sa][newComeJob.lifer] = true
-					// notify subscribers about come
+					// notify subscribers about come = move
+
+					// for i, k := range s.subscrs {
+
+					// }
 				}
 			case *jobMove:
 				newMoveJob, err := inbound.(*jobMove)
