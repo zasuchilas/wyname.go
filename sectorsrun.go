@@ -52,9 +52,8 @@ func (s *Sector) run() {
 				log.Println("awayjob")
 				job, err := inbound.(*jobAway)
 				if err == false {
-					l := job.lifer
-					delete(s.members[l.sa], l)
-					s.away(l, job.sa, job.filter, job.filters) // notify subscribers about away
+					delete(s.members[job.sa], job.lifer)
+					s.away(job.lifer, job.sa, job.filter, job.filters) // notify subscribers about away
 				}
 			case *jobSubscribe:
 				log.Println("jobSubscribe")
@@ -62,7 +61,7 @@ func (s *Sector) run() {
 				if err == false {
 					l := job.lifer
 					s.subscrs[l.sa][l] = true
-					// get package
+					s.pack(l) // send sector package to lifer
 				}
 			case *jobUnsubscribe:
 				log.Println("jobUnsubscribe")
