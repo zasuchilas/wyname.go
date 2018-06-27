@@ -68,8 +68,8 @@ func (s *Sector) run() {
 				job, err := inbound.(*jobUnsubscribe)
 				if err == false {
 					l := job.lifer
-					delete(s.subscrs[l.sa], l)
-					// send unsubscribe sector
+					delete(s.subscrs[job.sa], l)
+					l.send <- []byte(codeSectorUnpack + "," + s.name) // send remove sector points
 				}
 			}
 		}

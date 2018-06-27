@@ -18,6 +18,7 @@ const (
 	codeRemove        = "32"
 	codeRecount       = 37
 	codeSectorPackage = "38"
+	codeSectorUnpack  = "39"
 	codeLiferOffline  = 39
 	codeAway          = 44
 	codeGlobRequest   = "50"

@@ -13,11 +13,12 @@ import (
 // reading from websocket
 func (l *Lifer) read() {
 	defer func() {
-		l.conn.Close() // закрываем соединение websockets
 		statminus()
 		l.awayFromMembers()
 		l.unsubscribeEverywhere()
 		l.logC()
+		// need a pause?
+		l.conn.Close() // закрываем соединение websockets
 	}()
 
 	l.conn.SetReadLimit(maxMessageSize)
@@ -93,7 +94,7 @@ func (l *Lifer) read() {
 									// subscriptions
 									for oldSubscrSector := range l.subscriptions { // remove needless subscriptions
 										if _, found := subscriptions[oldSubscrSector]; !found {
-											l.secache[oldSubscrSector].broadcast <- createUnsubscribeJob(l)
+											l.secache[oldSubscrSector].broadcast <- createUnsubscribeJob(l, l.sa)
 										}
 									}
 									for newSubscrSector := range subscriptions { // add new subscriptions
