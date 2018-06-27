@@ -15,7 +15,7 @@ const (
 	codeSettings      = 18
 	codeGpsData       = "20"
 	codeMove          = "30"
-	codeRemove        = 32
+	codeRemove        = "32"
 	codeRecount       = 37
 	codeSectorPackage = 38
 	codeLiferOffline  = 39

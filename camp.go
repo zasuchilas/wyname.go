@@ -24,7 +24,7 @@ func (c *Camp) sector(name string) *Sector {
 	s, found := c.sectors[name]
 	c.mutex.RUnlock()
 	if found == false {
-		s = newsector()
+		s = newsector(name)
 		c.mutex.Lock()
 		s2, found := c.sectors[name]
 		if found == false {

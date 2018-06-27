@@ -14,3 +14,15 @@ func (s *Sector) move(l *Lifer) {
 		}
 	}
 }
+
+func (s *Sector) away(l *Lifer, sa int, filter int, filters []int) {
+	hash := l.hash
+	sector := s.name
+	for _, lifersa := range filters {
+		for subscriber := range s.subscrs[lifersa] {
+			if l != subscriber && chat(sa, filter, subscriber.sa, subscriber.filter) {
+				subscriber.send <- []byte(codeRemove + "," + hash + "," + sector)
+			}
+		}
+	}
+}

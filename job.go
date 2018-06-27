@@ -39,16 +39,22 @@ func createMoveJob(l *Lifer) *jobMove {
 // away
 
 type jobAway struct {
-	lifer *Lifer // lifer for remove
+	lifer   *Lifer // lifer for remove
+	sa      int    // snapshot of lifers sa
+	filter  int    // snapshot of lifers filter
+	filters []int  // copy lifer.filters
 }
 
 func (j *jobAway) code() int {
 	return 1
 }
 
-func createAwayJob(l *Lifer) *jobAway {
+func createAwayJob(l *Lifer, sa int, filter int, f []int) *jobAway {
 	return &jobAway{
-		lifer: l,
+		lifer:   l,
+		sa:      sa,
+		filter:  filter,
+		filters: f,
 	}
 }
 

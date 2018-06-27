@@ -6,12 +6,13 @@ import (
 
 // Sector регистрирует лайферов
 type Sector struct {
+	name      string                  // sector name
 	members   map[int]map[*Lifer]bool // members of sector
 	subscrs   map[int]map[*Lifer]bool // sector subscribers
 	broadcast chan job                // inbound messages from lifers
 }
 
-func newsector() *Sector {
+func newsector(name string) *Sector {
 	members := make(map[int]map[*Lifer]bool, 13)
 	subscrs := make(map[int]map[*Lifer]bool, 13)
 	members[0] = make(map[*Lifer]bool, 101)
@@ -21,6 +22,7 @@ func newsector() *Sector {
 		subscrs[sefsa] = make(map[*Lifer]bool, 101)
 	}
 	return &Sector{
+		name:      name,
 		members:   members,
 		subscrs:   subscrs,
 		broadcast: make(chan job),
@@ -34,37 +36,40 @@ func (s *Sector) run() {
 			switch inbound.(type) {
 			case *jobCome:
 				log.Println("comejob")
-				newComeJob, err := inbound.(*jobCome)
+				job, err := inbound.(*jobCome)
 				if err == false {
-					l := newComeJob.lifer
+					l := job.lifer
 					s.members[l.sa][l] = true
 					s.move(l) // notify subscribers about come (move)
 				}
 			case *jobMove:
-				newMoveJob, err := inbound.(*jobMove)
+				job, err := inbound.(*jobMove)
 				if err == false {
-					log.Println("movejob", newMoveJob.lifer)
-					s.move(newMoveJob.lifer) // notify subscribers about move
+					log.Println("movejob", job.lifer)
+					s.move(job.lifer) // notify subscribers about move
 				}
 			case *jobAway:
 				log.Println("awayjob")
-				newAwayJob, err := inbound.(*jobAway)
+				job, err := inbound.(*jobAway)
 				if err == false {
-					delete(s.members[newAwayJob.lifer.sa], newAwayJob.lifer)
-					// notify subscribers about away
+					l := job.lifer
+					delete(s.members[l.sa], l)
+					s.away(l, job.sa, job.filter, job.filters) // notify subscribers about away
 				}
 			case *jobSubscribe:
 				log.Println("jobSubscribe")
-				newSubscrJob, err := inbound.(*jobSubscribe)
+				job, err := inbound.(*jobSubscribe)
 				if err == false {
-					s.subscrs[newSubscrJob.lifer.sa][newSubscrJob.lifer] = true
+					l := job.lifer
+					s.subscrs[l.sa][l] = true
 					// get package
 				}
 			case *jobUnsubscribe:
 				log.Println("jobUnsubscribe")
-				newUnsubscribeJob, err := inbound.(*jobUnsubscribe)
+				job, err := inbound.(*jobUnsubscribe)
 				if err == false {
-					delete(s.subscrs[newUnsubscribeJob.lifer.sa], newUnsubscribeJob.lifer)
+					l := job.lifer
+					delete(s.subscrs[l.sa], l)
 					// send unsubscribe sector
 				}
 			}
