@@ -50,11 +50,3 @@ func (l *Lifer) changeSamfData(inbsamf int, inbsamft string) {
 	l.inboundSamf = inbsamft
 	l.sex, l.age, l.sa, l.filter, l.filters, l.mark = desamf(inbsamf)
 }
-
-// clearCalculatedData clears the computed data (for reconnect with new calculating values)
-// func (l *Lifer) clearCalculatedData() {
-// 	l.cmember = ""
-// 	for k := range l.csubscr {
-// 		delete(l.csubscr, k)
-// 	}
-// }

@@ -38,24 +38,13 @@ func (s *Sector) run() {
 				if err == false {
 					l := newComeJob.lifer
 					s.members[l.sa][l] = true
-					// notify subscribers about come = move
-					hash := l.hash
-					lat := l.inboundLat
-					lon := l.inboundLon
-					mark := l.mark
-					for _, lifersa := range newComeJob.lifer.filters {
-						for subscriber := range s.subscrs[lifersa] {
-							if chat(l.sa, l.filter, subscriber.sa, subscriber.filter) {
-								subscriber.send <- []byte(codeMove + "," + hash + "," + lat + "," + lon + "," + mark)
-							}
-						}
-					}
+					s.move(l) // notify subscribers about come (move)
 				}
 			case *jobMove:
 				newMoveJob, err := inbound.(*jobMove)
 				if err == false {
 					log.Println("movejob", newMoveJob.lifer)
-					// notify subscribers about move
+					s.move(newMoveJob.lifer) // notify subscribers about move
 				}
 			case *jobAway:
 				log.Println("awayjob")
