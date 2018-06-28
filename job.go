@@ -77,18 +77,20 @@ func createSubscribeJob(l *Lifer) *jobSubscribe {
 // unsubscribe
 
 type jobUnsubscribe struct {
-	lifer *Lifer // lifer for unsubscibe in sector
-	sa    int    // snapshot of lifers sa
+	lifer  *Lifer // lifer for unsubscibe in sector
+	sa     int    // snapshot of lifers sa
+	notify bool   // notify client about unpack
 }
 
 func (j *jobUnsubscribe) code() int {
 	return 1
 }
 
-func createUnsubscribeJob(l *Lifer, sa int) *jobUnsubscribe {
+func createUnsubscribeJob(l *Lifer, sa int, notify bool) *jobUnsubscribe {
 	return &jobUnsubscribe{
-		lifer: l,
-		sa:    sa,
+		lifer:  l,
+		sa:     sa,
+		notify: notify,
 	}
 }
 

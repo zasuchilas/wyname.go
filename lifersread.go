@@ -15,10 +15,10 @@ func (l *Lifer) read() {
 	defer func() {
 		statminus()
 		l.awayFromMembers()
-		l.unsubscribeEverywhere()
+		l.unsubscribeEverywhere(false)
 		l.logC()
-		// need a pause?
-		l.conn.Close() // закрываем соединение websockets
+		// we do not send anything to the client via websocket
+		l.conn.Close() // close the websocket connection
 	}()
 
 	l.conn.SetReadLimit(maxMessageSize)
@@ -49,7 +49,7 @@ func (l *Lifer) read() {
 						if l.started {
 							// reconnect
 							l.awayFromMembers()               // delete membership
-							l.unsubscribeEverywhere()         // delete all subscribtions
+							l.unsubscribeEverywhere(true)     // delete all subscribtions
 							l.changeSamfData(inbsamf, inb[1]) // ! change samf data
 							l.connectFirst()                  // connect with new samf data
 						} else {
@@ -94,7 +94,7 @@ func (l *Lifer) read() {
 									// subscriptions
 									for oldSubscrSector := range l.subscriptions { // remove needless subscriptions
 										if _, found := subscriptions[oldSubscrSector]; !found {
-											l.secache[oldSubscrSector].broadcast <- createUnsubscribeJob(l, l.sa)
+											l.secache[oldSubscrSector].broadcast <- createUnsubscribeJob(l, l.sa, true)
 										}
 									}
 									for newSubscrSector := range subscriptions { // add new subscriptions
@@ -125,7 +125,12 @@ func (l *Lifer) read() {
 					tclo, etclo := strconv.ParseFloat(inb[4], 64)
 					if etala == nil && etalo == nil && etcla == nil && etclo == nil {
 						log.Println(tala, talo, tcla, tclo)
+						// a, ea := newGps(tala, talo)
+						// c, ec := newGps(tcla, tclo)
+						// if ea == nil && ec == nil {
+						// 	globsectors := screen(a, c)
 
+						// }
 					}
 				}
 			}
