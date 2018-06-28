@@ -118,22 +118,30 @@ func (l *Lifer) read() {
 					}
 				}
 			case codeGlobRequest:
-				if len == 5 {
+				if len == 6 {
 					tala, etala := strconv.ParseFloat(inb[1], 64)
 					talo, etalo := strconv.ParseFloat(inb[2], 64)
 					tcla, etcla := strconv.ParseFloat(inb[3], 64)
 					tclo, etclo := strconv.ParseFloat(inb[4], 64)
+					globReqCode := inb[5]
 					if etala == nil && etalo == nil && etcla == nil && etclo == nil {
 						log.Println(tala, talo, tcla, tclo)
-						// a, ea := newGps(tala, talo)
-						// c, ec := newGps(tcla, tclo)
-						// if ea == nil && ec == nil {
-						// 	globsectors := screen(a, c)
-
-						// }
+						a, ea := newGps(tala, talo)
+						c, ec := newGps(tcla, tclo)
+						if ea == nil && ec == nil {
+							globsectors := screen(a, c)
+							for globsec := range globsectors {
+								globSector, found := l.secache[globsec]
+								if found == false {
+									globSector = camp.sector(globsec)
+									l.secache[globsec] = globSector
+								}
+								globSector.broadcast <- createGlobJob(l, globReqCode)
+							}
+						}
 					}
-				}
-			}
+				} // codeGlobRequest
+			} // switch
 		}
 	}
 }

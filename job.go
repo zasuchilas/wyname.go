@@ -94,4 +94,22 @@ func createUnsubscribeJob(l *Lifer, sa int, notify bool) *jobUnsubscribe {
 	}
 }
 
+// glob
+
+type jobGlob struct {
+	lifer       *Lifer // the lifer who made the request
+	globReqCode string // glob code of request
+}
+
+func (j *jobGlob) code() int {
+	return 1
+}
+
+func createGlobJob(l *Lifer, globReqCode string) *jobGlob {
+	return &jobGlob{
+		lifer:       l,
+		globReqCode: globReqCode,
+	}
+}
+
 //

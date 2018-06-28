@@ -22,7 +22,7 @@ const (
 	codeLiferOffline  = 39
 	codeAway          = 44
 	codeGlobRequest   = "50"
-	codeGlobPackage   = 54
+	codeGlobPackage   = "54"
 	codeStatsRequest  = "68"
 	codeStatsResponse = "69"
 	codeFolder        = 80

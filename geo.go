@@ -198,17 +198,6 @@ func (g *Gps) calculate() (membersec string, allsectors map[string]bool, err err
 	if err != nil {
 		err = fmt.Errorf("failed to create point C")
 	}
-	// ala, alo := a.sectornums()
-	// cla, clo := c.sectornums()
-	// cap := (cla - ala + 1) * (clo - alo + 1) // TODO test this with different placies & 180
-	// allsectors = make(map[string]bool, cap)
-	// var n string
-	// for i := ala; i <= cla; i++ {
-	// 	for j := alo; j <= clo; j++ {
-	// 		n = strconv.Itoa(i) + ":" + strconv.Itoa(j)
-	// 		allsectors[n] = true
-	// 	}
-	// }
 	allsectors = screen(a, c)
 	return
 }

@@ -71,6 +71,12 @@ func (s *Sector) run() {
 					delete(s.subscrs[job.sa], l)
 					l.send <- []byte(codeSectorUnpack + "," + s.name) // send remove sector points
 				}
+			case *jobGlob:
+				log.Println("jobGlob")
+				job, err := inbound.(*jobGlob)
+				if err == false {
+					s.glob(job.lifer, job.globReqCode)
+				}
 			}
 		}
 	}
