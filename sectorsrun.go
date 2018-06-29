@@ -25,7 +25,7 @@ func newsector(name string) *Sector {
 		name:      name,
 		members:   members,
 		subscrs:   subscrs,
-		broadcast: make(chan job),
+		broadcast: make(chan job, 2048),
 	}
 }
 
