@@ -56,11 +56,10 @@ func (s *Sector) run() {
 				}
 			case *jobSubscribe:
 				log.Println("jobSubscribe")
-				job, err := inbound.(*jobSubscribe)
+				j, err := inbound.(*jobSubscribe)
 				if err == false {
-					l := job.lifer
-					s.subscrs[l.sa][l] = true
-					s.pack(l) // send sector package to lifer
+					s.subscrs[j.sa][j.lifer] = true
+					s.pack(j.lifer, j.sa, j.filter, j.filters) // send sector package to lifer
 				}
 			case *jobUnsubscribe:
 				log.Println("jobUnsubscribe")
@@ -72,9 +71,9 @@ func (s *Sector) run() {
 				}
 			case *jobGlob:
 				log.Println("jobGlob")
-				job, err := inbound.(*jobGlob)
+				j, err := inbound.(*jobGlob)
 				if err == false {
-					s.glob(job.lifer, job.globReqCode)
+					s.glob(j.lifer, j.sa, j.filter, j.filters, j.globReqCode)
 				}
 			}
 		}

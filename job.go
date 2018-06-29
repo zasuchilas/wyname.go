@@ -109,7 +109,10 @@ func createAwayJob(l *Lifer) *jobAway {
 // subscribe
 
 type jobSubscribe struct {
-	lifer *Lifer // lifer for subsribe in sector
+	lifer   *Lifer // lifer for subsribe in sector
+	sa      int    // snapshot of lifers sa
+	filter  int    // snapshot of lifers filter
+	filters []int  // copy lifer.filters
 }
 
 func (j *jobSubscribe) code() int {
@@ -117,8 +120,17 @@ func (j *jobSubscribe) code() int {
 }
 
 func createSubscribeJob(l *Lifer) *jobSubscribe {
+	l.mutex.RLock()
+	sa := l.sa
+	filter := l.filter
+	filters := make([]int, len(l.filters))
+	copy(filters, l.filters)
+	l.mutex.RUnlock()
 	return &jobSubscribe{
-		lifer: l,
+		lifer:   l,
+		sa:      sa,
+		filter:  filter,
+		filters: filters,
 	}
 }
 
@@ -146,6 +158,9 @@ func createUnsubscribeJob(l *Lifer, sa int, notify bool) *jobUnsubscribe {
 
 type jobGlob struct {
 	lifer       *Lifer // the lifer who made the request
+	sa          int    // snapshot of lifers sa
+	filter      int    // snapshot of lifers filter
+	filters     []int  // copy lifer.filters
 	globReqCode string // glob code of request
 }
 
@@ -154,8 +169,17 @@ func (j *jobGlob) code() int {
 }
 
 func createGlobJob(l *Lifer, globReqCode string) *jobGlob {
+	l.mutex.RLock()
+	sa := l.sa
+	filter := l.filter
+	filters := make([]int, len(l.filters))
+	copy(filters, l.filters)
+	l.mutex.RUnlock()
 	return &jobGlob{
 		lifer:       l,
+		sa:          sa,
+		filter:      filter,
+		filters:     filters,
 		globReqCode: globReqCode,
 	}
 }

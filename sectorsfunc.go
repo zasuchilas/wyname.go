@@ -34,26 +34,21 @@ func (s *Sector) away(l *Lifer, sa, filter int, filters []int) {
 	}
 }
 
-func (s *Sector) pack(l *Lifer) {
-	pack, err := s.sectorPack(l)
+func (s *Sector) pack(l *Lifer, sa, filter int, filters []int) {
+	pack, err := s.sectorPack(l, sa, filter, filters)
 	if err == nil {
 		l.send <- []byte(codeSectorPackage + pack)
 	}
 }
 
-func (s *Sector) glob(l *Lifer, globReqCode string) {
-	pack, err := s.sectorPack(l)
+func (s *Sector) glob(l *Lifer, sa, filter int, filters []int, globReqCode string) {
+	pack, err := s.sectorPack(l, sa, filter, filters)
 	if err == nil {
 		l.send <- []byte(codeGlobPackage + "," + globReqCode + pack)
 	}
 }
 
-func (s *Sector) sectorPack(l *Lifer) (pack string, err error) {
-	l.mutex.RLock()
-	sa := l.sa
-	filter := l.filter
-	filters := l.filters
-	l.mutex.RUnlock()
+func (s *Sector) sectorPack(l *Lifer, sa, filter int, filters []int) (pack string, err error) {
 	for _, lf := range filters {
 		for member := range s.members[lf] {
 			member.mutex.RLock()
