@@ -146,7 +146,10 @@ func (j *jobUnsubscribe) code() int {
 	return 1
 }
 
-func createUnsubscribeJob(l *Lifer, sa int, notify bool) *jobUnsubscribe {
+func createUnsubscribeJob(l *Lifer, notify bool) *jobUnsubscribe {
+	l.mutex.RLock()
+	sa := l.sa
+	l.mutex.RUnlock()
 	return &jobUnsubscribe{
 		lifer:  l,
 		sa:     sa,

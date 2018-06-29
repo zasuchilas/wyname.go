@@ -63,10 +63,10 @@ func (s *Sector) run() {
 				}
 			case *jobUnsubscribe:
 				log.Println("jobUnsubscribe")
-				job, err := inbound.(*jobUnsubscribe)
+				j, err := inbound.(*jobUnsubscribe)
 				if err == false {
-					l := job.lifer
-					delete(s.subscrs[job.sa], l)
+					l := j.lifer
+					delete(s.subscrs[j.sa], l)
 					l.send <- []byte(codeSectorUnpack + "," + s.name) // send remove sector points
 				}
 			case *jobGlob:

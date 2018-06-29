@@ -94,7 +94,7 @@ func (l *Lifer) read() {
 									// subscriptions
 									for oldSubscrSector := range l.subscriptions { // remove needless subscriptions
 										if _, found := subscriptions[oldSubscrSector]; !found {
-											l.secache[oldSubscrSector].broadcast <- createUnsubscribeJob(l, l.sa, true)
+											l.secache[oldSubscrSector].broadcast <- createUnsubscribeJob(l, true)
 										}
 									}
 									for newSubscrSector := range subscriptions { // add new subscriptions

@@ -26,7 +26,7 @@ func (l *Lifer) awayFromMembers() {
 // unsubscribeEverywhere removes all subscribtions in sectors
 func (l *Lifer) unsubscribeEverywhere(notify bool) {
 	if len(l.subscriptions) > 0 {
-		awayUnsubscrJob := createUnsubscribeJob(l, l.sa, notify)
+		awayUnsubscrJob := createUnsubscribeJob(l, notify)
 		for awayname := range l.subscriptions {
 			if awaySubs, found := l.secache[awayname]; found {
 				awaySubs.broadcast <- awayUnsubscrJob
