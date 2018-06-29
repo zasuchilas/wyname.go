@@ -36,11 +36,11 @@ func (l *Lifer) write() {
 			// к данному сообщению (чтобы одним блоком ушло все из буфера лайфера)
 			// логично: ядер конечное число, и горутины ждут своей очереди
 			// поэтому используем возможность, чтобы не стоять снова
-			n := len(l.send)
-			for i := 0; i < n; i++ {
-				w.Write(newline)
-				w.Write(<-l.send)
-			}
+			// n := len(l.send)
+			// for i := 0; i < n; i++ {
+			// 	w.Write(newline)
+			// 	w.Write(<-l.send)
+			// }
 
 			if err := w.Close(); err != nil {
 				return
