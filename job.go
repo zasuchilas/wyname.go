@@ -7,7 +7,13 @@ type job interface {
 // come
 
 type jobCome struct {
-	lifer *Lifer // lifer for add to sector members
+	lifer   *Lifer // lifer for add to sector members
+	lat     string // snapshot inboundLat
+	lon     string // snapshot inbounLon
+	sa      int    // snapshot sa
+	filter  int    // snapshot filter
+	mark    string // snapshot mark
+	filters []int  // snapshot filters
 }
 
 func (j *jobCome) code() int {
@@ -15,15 +21,36 @@ func (j *jobCome) code() int {
 }
 
 func createComeJob(l *Lifer) *jobCome {
+	l.mutex.RLock()
+	lat := l.inboundLat
+	lon := l.inboundLon
+	sa := l.sa
+	filter := l.filter
+	mark := l.mark
+	filters := make([]int, len(l.filters))
+	copy(filters, l.filters)
+	l.mutex.RUnlock()
 	return &jobCome{
-		lifer: l,
+		lifer:   l,
+		lat:     lat,
+		lon:     lon,
+		sa:      sa,
+		filter:  filter,
+		mark:    mark,
+		filters: filters,
 	}
 }
 
 // move
 
 type jobMove struct {
-	lifer *Lifer // lifer for add to sector members
+	lifer   *Lifer // lifer for add to sector members
+	lat     string // snapshot inboundLat
+	lon     string // snapshot inbounLon
+	sa      int    // snapshot sa
+	filter  int    // snapshot filter
+	mark    string // snapshot mark
+	filters []int  // snapshot filters
 }
 
 func (j *jobMove) code() int {
@@ -31,8 +58,23 @@ func (j *jobMove) code() int {
 }
 
 func createMoveJob(l *Lifer) *jobMove {
+	l.mutex.RLock()
+	lat := l.inboundLat
+	lon := l.inboundLon
+	sa := l.sa
+	filter := l.filter
+	mark := l.mark
+	filters := make([]int, len(l.filters))
+	copy(filters, l.filters)
+	l.mutex.RUnlock()
 	return &jobMove{
-		lifer: l,
+		lifer:   l,
+		lat:     lat,
+		lon:     lon,
+		sa:      sa,
+		filter:  filter,
+		mark:    mark,
+		filters: filters,
 	}
 }
 

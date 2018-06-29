@@ -36,20 +36,16 @@ func (s *Sector) run() {
 			switch inbound.(type) {
 			case *jobCome:
 				log.Println("comejob")
-				job, err := inbound.(*jobCome)
+				j, err := inbound.(*jobCome)
 				if err == false {
-					l := job.lifer
-					l.mutex.RLock()
-
-					l.mutex.RUnlock()
-					s.members[l.sa][l] = true
-					s.move(l) // notify subscribers about come (move)
+					s.members[j.sa][j.lifer] = true
+					s.move(j.lifer, j.lat, j.lon, j.mark, j.sa, j.filter, j.filters) // notify subscribers about come (move)
 				}
 			case *jobMove:
-				job, err := inbound.(*jobMove)
+				j, err := inbound.(*jobMove)
 				if err == false {
-					log.Println("movejob", job.lifer)
-					s.move(job.lifer) // notify subscribers about move
+					log.Println("movejob", j.lifer)
+					s.move(j.lifer, j.lat, j.lon, j.mark, j.sa, j.filter, j.filters) // notify subscribers about move
 				}
 			case *jobAway:
 				log.Println("awayjob")

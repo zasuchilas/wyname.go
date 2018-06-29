@@ -3,17 +3,8 @@ package main
 import "fmt"
 
 // move notify subscribers about move
-func (s *Sector) move(l *Lifer) {
+func (s *Sector) move(l *Lifer, lat, lon, mark string, sa, filter int, filters []int) {
 	hash := l.hash
-	l.mutex.RLock()
-	lat := l.inboundLat
-	lon := l.inboundLon
-	sa := l.sa
-	filter := l.filter
-	mark := l.mark
-	filters := make([]int, len(l.filters))
-	copy(filters, l.filters)
-	l.mutex.RUnlock()
 	for _, lf := range filters {
 		for subscriber := range s.subscrs[lf] {
 			subscriber.mutex.RLock()
