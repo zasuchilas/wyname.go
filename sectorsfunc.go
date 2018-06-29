@@ -11,7 +11,7 @@ func (s *Sector) move(l *Lifer, lat, lon, mark string, sa, filter int, filters [
 			ssa := subscriber.sa
 			sfilter := subscriber.filter
 			subscriber.mutex.RUnlock()
-			if l != subscriber && chat(sa, filter, ssa, sfilter) {
+			if hash != subscriber.hash && chat(sa, filter, ssa, sfilter) {
 				subscriber.send <- []byte(codeMove + "," + hash + "," + lat + "," + lon + "," + mark)
 			}
 		}
@@ -27,7 +27,7 @@ func (s *Sector) away(l *Lifer, sa, filter int, filters []int) {
 			ssa := subscriber.sa
 			sfilter := subscriber.filter
 			subscriber.mutex.RUnlock()
-			if l != subscriber && chat(sa, filter, ssa, sfilter) {
+			if hash != subscriber.hash && chat(sa, filter, ssa, sfilter) {
 				subscriber.send <- []byte(codeRemove + "," + hash + "," + sector)
 			}
 		}
@@ -49,6 +49,7 @@ func (s *Sector) glob(l *Lifer, sa, filter int, filters []int, globReqCode strin
 }
 
 func (s *Sector) sectorPack(l *Lifer, sa, filter int, filters []int) (pack string, err error) {
+	hash := l.hash
 	for _, lf := range filters {
 		for member := range s.members[lf] {
 			member.mutex.RLock()
@@ -58,7 +59,7 @@ func (s *Sector) sectorPack(l *Lifer, sa, filter int, filters []int) (pack strin
 			mlon := member.inboundLon
 			mmark := member.mark
 			member.mutex.RUnlock()
-			if l != member && chat(sa, filter, msa, mfilter) {
+			if hash != member.hash && chat(sa, filter, msa, mfilter) {
 				pack += "," + member.hash + "," + mlat + "," + mlon + "," + mmark
 			}
 		}
