@@ -1,6 +1,10 @@
 package main
 
-import "github.com/gorilla/websocket"
+import (
+	"sync"
+
+	"github.com/gorilla/websocket"
+)
 
 // Lifer пользователь поверх websocket
 type Lifer struct {
@@ -34,4 +38,6 @@ type Lifer struct {
 	secache       map[string]*Sector // lifers cache of *Sectors
 	membership    string             // current lifer member sector
 	subscriptions map[string]bool    // current lifer subscribe sectors
+
+	mutex *sync.RWMutex // мьютекс к ресурсу lifer
 }

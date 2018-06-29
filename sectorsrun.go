@@ -39,6 +39,9 @@ func (s *Sector) run() {
 				job, err := inbound.(*jobCome)
 				if err == false {
 					l := job.lifer
+					l.mutex.RLock()
+
+					l.mutex.RUnlock()
 					s.members[l.sa][l] = true
 					s.move(l) // notify subscribers about come (move)
 				}

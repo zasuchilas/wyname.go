@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -36,6 +37,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		initgps:  false,
 		started:  false,
 		secache:  make(map[string]*Sector, 21),
+		mutex:    new(sync.RWMutex),
 	}
 
 	statplus()

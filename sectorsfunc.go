@@ -5,12 +5,22 @@ import "fmt"
 // move notify subscribers about move
 func (s *Sector) move(l *Lifer) {
 	hash := l.hash
+	l.mutex.RLock()
 	lat := l.inboundLat
 	lon := l.inboundLon
+	sa := l.sa
+	filter := l.filter
 	mark := l.mark
-	for _, lf := range l.filters {
+	filters := make([]int, len(l.filters))
+	copy(filters, l.filters)
+	l.mutex.RUnlock()
+	for _, lf := range filters {
 		for subscriber := range s.subscrs[lf] {
-			if l != subscriber && chat(l.sa, l.filter, subscriber.sa, subscriber.filter) {
+			subscriber.mutex.RLock()
+			ssa := subscriber.sa
+			sfilter := subscriber.filter
+			subscriber.mutex.RUnlock()
+			if l != subscriber && chat(sa, filter, ssa, sfilter) {
 				subscriber.send <- []byte(codeMove + "," + hash + "," + lat + "," + lon + "," + mark)
 			}
 		}
@@ -22,7 +32,11 @@ func (s *Sector) away(l *Lifer, sa int, filter int, filters []int) {
 	sector := s.name
 	for _, lf := range filters {
 		for subscriber := range s.subscrs[lf] {
-			if l != subscriber && chat(sa, filter, subscriber.sa, subscriber.filter) {
+			subscriber.mutex.RLock()
+			ssa := subscriber.sa
+			sfilter := subscriber.filter
+			subscriber.mutex.RUnlock()
+			if l != subscriber && chat(sa, filter, ssa, sfilter) {
 				subscriber.send <- []byte(codeRemove + "," + hash + "," + sector)
 			}
 		}
@@ -44,10 +58,22 @@ func (s *Sector) glob(l *Lifer, globReqCode string) {
 }
 
 func (s *Sector) sectorPack(l *Lifer) (pack string, err error) {
-	for _, lf := range l.filters {
+	l.mutex.RLock()
+	sa := l.sa
+	filter := l.filter
+	filters := l.filters
+	l.mutex.RUnlock()
+	for _, lf := range filters {
 		for member := range s.members[lf] {
-			if l != member && chat(l.sa, l.filter, member.sa, member.filter) {
-				pack += "," + member.hash + "," + member.inboundLat + "," + member.inboundLon + "," + member.mark
+			member.mutex.RLock()
+			msa := member.sa
+			mfilter := member.filter
+			mlat := member.inboundLat
+			mlon := member.inboundLon
+			mmark := member.mark
+			member.mutex.RUnlock()
+			if l != member && chat(sa, filter, msa, mfilter) {
+				pack += "," + member.hash + "," + mlat + "," + mlon + "," + mmark
 			}
 		}
 	}
