@@ -18,7 +18,7 @@ func (s *Sector) move(l *Lifer, lat, lon, mark string, sa, filter int, filters [
 	}
 }
 
-func (s *Sector) away(l *Lifer, sa int, filter int, filters []int) {
+func (s *Sector) away(l *Lifer, sa, filter int, filters []int) {
 	hash := l.hash
 	sector := s.name
 	for _, lf := range filters {

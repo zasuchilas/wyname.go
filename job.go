@@ -91,12 +91,18 @@ func (j *jobAway) code() int {
 	return 1
 }
 
-func createAwayJob(l *Lifer, sa int, filter int, f []int) *jobAway {
+func createAwayJob(l *Lifer) *jobAway {
+	l.mutex.RLock()
+	sa := l.sa
+	filter := l.filter
+	filters := make([]int, len(l.filters))
+	copy(filters, l.filters)
+	l.mutex.RUnlock()
 	return &jobAway{
 		lifer:   l,
 		sa:      sa,
 		filter:  filter,
-		filters: f,
+		filters: filters,
 	}
 }
 

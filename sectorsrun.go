@@ -49,10 +49,10 @@ func (s *Sector) run() {
 				}
 			case *jobAway:
 				log.Println("awayjob")
-				job, err := inbound.(*jobAway)
+				j, err := inbound.(*jobAway)
 				if err == false {
-					delete(s.members[job.sa], job.lifer)
-					s.away(job.lifer, job.sa, job.filter, job.filters) // notify subscribers about away
+					delete(s.members[j.sa], j.lifer)
+					s.away(j.lifer, j.sa, j.filter, j.filters) // notify subscribers about away
 				}
 			case *jobSubscribe:
 				log.Println("jobSubscribe")

@@ -18,9 +18,7 @@ func (l *Lifer) connectFirst() {
 func (l *Lifer) awayFromMembers() {
 	if l.membership != "" {
 		if awaySector, found := l.secache[l.membership]; found {
-			filters := make([]int, len(l.filters))
-			copy(filters, l.filters)
-			awaySector.broadcast <- createAwayJob(l, l.sa, l.filter, filters)
+			awaySector.broadcast <- createAwayJob(l)
 		}
 	}
 }
