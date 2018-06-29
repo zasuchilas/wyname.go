@@ -72,9 +72,11 @@ func (l *Lifer) read() {
 							membership, subscriptions, e := g.calculate() // new member and subscribe sectors
 							if e == nil {
 								// save new data
+								l.mutex.Lock()
 								l.gps = g
 								l.inboundLat = inb[1]
 								l.inboundLon = inb[2]
+								l.mutex.Unlock()
 								// secache update
 								for subsc := range subscriptions {
 									if _, found := l.secache[subsc]; !found {

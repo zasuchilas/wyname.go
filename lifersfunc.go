@@ -37,16 +37,38 @@ func (l *Lifer) unsubscribeEverywhere(notify bool) {
 
 func (l *Lifer) logB() {
 	// -> log : part, hash, samf, sex, age, lat, lon
-	log.Println("B," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
+	l.mutex.RLock()
+	samf := l.inboundSamf
+	sex := l.sex
+	age := l.age
+	lat := l.inboundLat
+	lon := l.inboundLon
+	l.mutex.RUnlock()
+	log.Println("B," + l.hash + "," + samf + "," + strconv.Itoa(sex) + "," + strconv.Itoa(age) + "," + lat + "," + lon)
 }
 
 func (l *Lifer) logC() {
 	// -> log : part, hash, samf, sex, age, lat, lon
-	log.Println("C," + l.hash + "," + l.inboundSamf + "," + strconv.Itoa(l.sex) + "," + strconv.Itoa(l.age) + "," + l.inboundLat + "," + l.inboundLon)
+	l.mutex.RLock()
+	samf := l.inboundSamf
+	sex := l.sex
+	age := l.age
+	lat := l.inboundLat
+	lon := l.inboundLon
+	l.mutex.RUnlock()
+	log.Println("C," + l.hash + "," + samf + "," + strconv.Itoa(sex) + "," + strconv.Itoa(age) + "," + lat + "," + lon)
 }
 
 func (l *Lifer) changeSamfData(inbsamf int, inbsamft string) {
+	lsex, lage, lsa, lfilter, lfilters, lmark := desamf(inbsamf)
+	l.mutex.Lock()
 	l.samf = inbsamf
 	l.inboundSamf = inbsamft
-	l.sex, l.age, l.sa, l.filter, l.filters, l.mark = desamf(inbsamf)
+	l.sex = lsex
+	l.age = lage
+	l.sa = lsa
+	l.filter = lfilter
+	l.filters = lfilters
+	l.mark = lmark
+	l.mutex.Unlock()
 }
