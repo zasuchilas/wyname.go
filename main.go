@@ -33,12 +33,13 @@ func main() {
 
 func serveAll(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Upgrade") == "websocket" {
-		if r.URL.Path == "/sync" {
+		path := r.URL.Path
+		if path == "/sync" {
 			synchronize(w, r)
 		} else {
-			// security path
-			// ...
-			serveWs(w, r)
+			if auth(path) { // security path
+				serveWs(w, r)
+			}
 		}
 	} else {
 		http.Error(w, "Not found", http.StatusNotFound)
