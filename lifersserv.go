@@ -30,7 +30,8 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	lifer := &Lifer{
-		hash:     fmt.Sprint(&conn)[2:],
+		// hash:     fmt.Sprint(&conn)[2:],
+		hash:     fmt.Sprint(&conn),
 		conn:     conn,
 		send:     make(chan []byte, 512),
 		initsamf: false,
