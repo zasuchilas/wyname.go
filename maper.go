@@ -46,11 +46,12 @@ func auth(path string) (access bool) {
 		return false
 	}
 	// synchr check
-	befen := string(path[19])
+	befen := path[19:]
 	befkey := mls3 + sec3 + rnd3 + mls3c + sec3c + rnd3c
 	bef, err := befdecode(befen, befkey)
 	if err != nil {
-		log.Println("bef check failure")
+		log.Println("bef check failure", err)
+		// log.Println("bef check failure, befen:", befen, "befkey:", befkey, )
 		return false
 	}
 	srvcalc, err := strconv.ParseInt(bef+sec3, 10, 64)
@@ -59,6 +60,7 @@ func auth(path string) (access bool) {
 		return false
 	}
 	diff := srvNowSeconds - srvcalc
+	log.Println("diff", diff, "srvNowSeconds", srvNowSeconds, "srvcalc", srvcalc, "befen", befen, "befkey", befkey, "bef", bef, "path", path)
 	if diff < -1 || diff > 2 {
 		log.Println("srv time check failure, diff:", diff)
 		return false

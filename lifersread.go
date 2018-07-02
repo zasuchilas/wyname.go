@@ -66,7 +66,7 @@ func (l *Lifer) read() {
 				if len == 3 {
 					inbla, ela := strconv.ParseFloat(inb[1], 64)
 					inblo, elo := strconv.ParseFloat(inb[2], 64)
-					if ela == nil && elo == nil && (inbla != l.gps.lat || inblo != l.gps.lon) {
+					if ela == nil && elo == nil && (l.gps == nil || (l.gps != nil && (inbla != l.gps.lat || inblo != l.gps.lon))) {
 						g, e := newGps(inbla, inblo)
 						if e == nil {
 							membership, subscriptions, e := g.calculate() // new member and subscribe sectors
