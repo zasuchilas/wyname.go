@@ -35,47 +35,41 @@ func (s *Sector) run() {
 		case inbound := <-s.broadcast:
 			switch inbound.(type) {
 			case *jobCome:
-				j, errCome := inbound.(*jobCome)
-				log.Println("comejob", j, "err:", errCome)
-				// if errCome == false {
-				s.members[j.sa][j.lifer] = true
-				log.Println("come members", s.members)
-				s.move(j.lifer, j.lat, j.lon, j.mark, j.sa, j.filter, j.filters) // notify subscribers about come (move)
-				// }
+				j, ok := inbound.(*jobCome)
+				if !ok == false {
+					s.members[j.sa][j.lifer] = true
+					log.Println("come members", s.members)
+					s.move(j.lifer, j.lat, j.lon, j.mark, j.sa, j.filter, j.filters) // notify subscribers about come (move)
+				}
 			case *jobMove:
-				j, errMove := inbound.(*jobMove)
-				log.Println("movejob", j, "err:", errMove)
-				// if errMove == false {
-				s.move(j.lifer, j.lat, j.lon, j.mark, j.sa, j.filter, j.filters) // notify subscribers about move
-				// }
+				j, ok := inbound.(*jobMove)
+				if !ok == false {
+					s.move(j.lifer, j.lat, j.lon, j.mark, j.sa, j.filter, j.filters) // notify subscribers about move
+				}
 			case *jobAway:
-				j, err := inbound.(*jobAway)
-				log.Println("awayjob", j, "err:", err)
-				// if err == false {
-				delete(s.members[j.sa], j.lifer)
-				s.away(j.lifer, j.sa, j.filter, j.filters) // notify subscribers about away
-				// }
+				j, ok := inbound.(*jobAway)
+				if !ok == false {
+					delete(s.members[j.sa], j.lifer)
+					s.away(j.lifer, j.sa, j.filter, j.filters) // notify subscribers about away
+				}
 			case *jobSubscribe:
-				j, err := inbound.(*jobSubscribe)
-				log.Println("jobSubscribe", j, "err:", err)
-				// if err == false {
-				s.subscrs[j.sa][j.lifer] = true
-				s.pack(j.lifer, j.sa, j.filter, j.filters) // send sector package to lifer
-				// }
+				j, ok := inbound.(*jobSubscribe)
+				if !ok == false {
+					s.subscrs[j.sa][j.lifer] = true
+					s.pack(j.lifer, j.sa, j.filter, j.filters) // send sector package to lifer
+				}
 			case *jobUnsubscribe:
-				j, err := inbound.(*jobUnsubscribe)
-				log.Println("jobUnsubscribe", j, "err:", err)
-				// if err == false {
-				l := j.lifer
-				delete(s.subscrs[j.sa], l)
-				l.send <- []byte(codeSectorUnpack + "," + s.name) // send remove sector points
-				// }
+				j, ok := inbound.(*jobUnsubscribe)
+				if !ok == false {
+					l := j.lifer
+					delete(s.subscrs[j.sa], l)
+					l.send <- []byte(codeSectorUnpack + "," + s.name) // send remove sector points
+				}
 			case *jobGlob:
-				j, err := inbound.(*jobGlob)
-				log.Println("jobGlob", j, "err:", err)
-				// if err == false {
-				s.glob(j.lifer, j.sa, j.filter, j.filters, j.globReqCode)
-				// }
+				j, ok := inbound.(*jobGlob)
+				if !ok == false {
+					s.glob(j.lifer, j.sa, j.filter, j.filters, j.globReqCode)
+				}
 			}
 		}
 	}
