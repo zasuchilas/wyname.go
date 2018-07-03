@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -13,7 +12,6 @@ func (l *Lifer) write() {
 	defer func() {
 		ticker.Stop()
 		l.conn.Close() // TODO дублирует то что в read ?
-		log.Println("defer write", l.hash)
 	}()
 
 	for {

@@ -1,9 +1,5 @@
 package main
 
-import (
-	"log"
-)
-
 // Sector регистрирует лайферов
 type Sector struct {
 	name      string                  // sector name
@@ -38,7 +34,6 @@ func (s *Sector) run() {
 				j, ok := inbound.(*jobCome)
 				if !ok == false {
 					s.members[j.sa][j.lifer] = true
-					log.Println("come members", s.members)
 					s.move(j.lifer, j.lat, j.lon, j.mark, j.sa, j.filter, j.filters) // notify subscribers about come (move)
 				}
 			case *jobMove:

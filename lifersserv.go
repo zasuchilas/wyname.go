@@ -22,7 +22,6 @@ var (
 )
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
-	log.Println("conn path:", r.URL)
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)

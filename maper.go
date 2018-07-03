@@ -60,8 +60,8 @@ func auth(path string) (access bool) {
 		return false
 	}
 	diff := srvNowSeconds - srvcalc
-	log.Println("diff", diff, "srvNowSeconds", srvNowSeconds, "srvcalc", srvcalc, "befen", befen, "befkey", befkey, "bef", bef, "path", path)
-	if diff < -1 || diff > 2 {
+	// log.Println("diff", diff, "srvNowSeconds", srvNowSeconds, "srvcalc", srvcalc, "befen", befen, "befkey", befkey, "bef", bef, "path", path)
+	if diff < -1 || diff > 1 {
 		log.Println("srv time check failure, diff:", diff)
 		return false
 	}
