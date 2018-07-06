@@ -25,7 +25,8 @@ func main() {
 	http.HandleFunc("/", serveAll)
 
 	fmt.Println(*addr, "started")
-	err := http.ListenAndServe(*addr, nil)
+	err := http.ListenAndServeTLS(*addr, "/etc/letsencrypt/live/whatsyourna.me/fullchain.pem", "/etc/letsencrypt/live/whatsyourna.me/privkey.pem", nil)
+	// err := http.ListenAndServe(*addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe", err)
 	}
