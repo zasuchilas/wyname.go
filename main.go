@@ -12,6 +12,8 @@ import (
 var (
 	org  = flag.String("org", "https://localhost:6969", "http service address")
 	addr = flag.String("addr", ":6970", "ws service address")
+	cert = flag.String("cert", "", "ssl cert")
+	key  = flag.String("key", "", "ssl key")
 	camp *Camp
 )
 
@@ -25,7 +27,7 @@ func main() {
 	http.HandleFunc("/", serveAll)
 
 	fmt.Println(*addr, "started")
-	err := http.ListenAndServeTLS(*addr, "/etc/letsencrypt/live/whatsyourna.me/fullchain.pem", "/etc/letsencrypt/live/whatsyourna.me/privkey.pem", nil)
+	err := http.ListenAndServeTLS(*addr, *cert, *key, nil)
 	// err := http.ListenAndServe(*addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe", err)
