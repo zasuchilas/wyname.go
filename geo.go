@@ -57,67 +57,6 @@ func (g *Gps) dist589() (north, east float64) {
 	// return 3.14
 }
 
-// Получить секторы экрана
-// вернее, области включающей 2 точки
-// A нижняя левая, C верхняя правая
-/*
-static Set screenSectors(List tA, List tC) {
-	Set sects = new Set();
-
-	// checks
-	if ((tA[0] > tC[0]) || (tA[1] > tC[1])) return sects;
-
-	// lons
-	Set losSet = new Set();
-	int losC = sectorsLonPart(tC[1]); // lo крайнего справа сектора C
-	int losA = sectorsLonPart(tA[1]); // lo крайнего слева сектора A
-	int computedSectLon = losA;
-	while (computedSectLon <= losC) {
-		losSet.add(computedSectLon);
-		computedSectLon += 1; // прибавляем по одному сектору
-	}
-	// print('losSet: $losSet');
-
-	// lats
-	Set lasSet = new Set();
-	int lasC = sectorsLatPart(tC[0]); // la крайнего сверху сектора C
-	int lasA = sectorsLatPart(tA[0]); // la крайнего снизу сектора A
-	int computedSectLat = lasA;
-	while (computedSectLat <= lasC) {
-		lasSet.add(computedSectLat);
-		computedSectLat += 5; // прибавляем по одному секторы (у lat шаг 5)
-	}
-	// print('lasSet: $lasSet');
-
-	lasSet.forEach((e1) {
-		losSet.forEach((e2) {
-			sects.add('${e1}|${e2}');
-		});
-	});
-	// print('sects: $sects');
-
-	return sects;
-}
-
-  /// Возвращает дистанцию между точками в метрах
-  static num distance(List pa, List pb) {
-    if (pa.length != 2 || pb.length != 2) return 0;
-    num ac = (pa[0]-pb[0])/la1; // АС в метрах
-    num bc = (pa[1]-pb[1])/lo1; // BC в метрах
-    num ab = sqrt(pow(ac, 2) + pow(bc, 2));
-    return ab;
-	}
-
-  static bool validate(dynamic mla, dynamic mlo) {
-    bool valid = false;
-    if (mla is int && mlo is int) { // if null -> false
-      if (mla < mlamax && mla > -(mlamax)
-          && mlo < mlomax && mlo > -(mlomax)) valid = true;
-    }
-    return valid;
-  }
-*/
-
 // Gps координаты
 type Gps struct {
 	lat float64
@@ -125,7 +64,9 @@ type Gps struct {
 }
 
 func newGps(lat, lon float64) (gps *Gps, err error) {
-	if lat > 180 || lat < -180 || lon > 90 || lon < -90 {
+	// if lat > 180 || lat < -180 || lon > 90 || lon < -90 {
+	// if lat > 179.9 || lat < -179.9 || lon > 89 || lon < -89 {
+	if lat > 179.9 || lat < -179.9 || (lat > -0.1 && lat < 0.1) || lon > 89 || lon < -89 || (lon > -0.1 && lon < 0.1) {
 		err = fmt.Errorf("coordinates out of range")
 	}
 	// TODO: для крайних случаев делаем обработку (180, -180, 90, -90, 0)

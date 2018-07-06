@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 )
@@ -44,8 +43,8 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 
 	lifer.send <- []byte("12," + lifer.hash)
 
-	// -> log : part, hash, remote_addr, host, cookies, useragent, wskey, tls
-	log.Println("A," + lifer.hash + "," + r.RemoteAddr + "," + strings.Replace(r.Host, ",", " ", -1) + "," + strings.Replace(fmt.Sprint(r.Cookies()), ",", " ", -1) + "," + strings.Replace(r.UserAgent(), ",", "", -1) + "," + r.Header.Get("Sec-WebSocket-Key") + "," + strings.Replace(fmt.Sprint(r.TLS), ",", "", -1))
+	// -> log : part, hash, remote_addr
+	log.Println("A," + lifer.hash + "," + r.RemoteAddr)
 
 	go lifer.read()
 	go lifer.write()

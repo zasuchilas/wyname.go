@@ -27,8 +27,12 @@ func main() {
 	http.HandleFunc("/", serveAll)
 
 	fmt.Println(*addr, "started")
-	err := http.ListenAndServeTLS(*addr, *cert, *key, nil)
-	// err := http.ListenAndServe(*addr, nil)
+	var err error
+	if *cert == "" || *key == "" {
+		err = http.ListenAndServe(*addr, nil)
+	} else {
+		err = http.ListenAndServeTLS(*addr, *cert, *key, nil)
+	}
 	if err != nil {
 		log.Fatal("ListenAndServe", err)
 	}
