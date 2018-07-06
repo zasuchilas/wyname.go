@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -127,7 +126,6 @@ func (l *Lifer) read() {
 					tclo, etclo := strconv.ParseFloat(inb[4], 64)
 					globReqCode := inb[5]
 					if etala == nil && etalo == nil && etcla == nil && etclo == nil {
-						log.Println(tala, talo, tcla, tclo)
 						a, ea := newGps(tala, talo)
 						c, ec := newGps(tcla, tclo)
 						if ea == nil && ec == nil {

@@ -12,7 +12,6 @@ import (
 // var upgraderForSync = websocket.Upgrader{} // use default options
 
 func synchronize(w http.ResponseWriter, r *http.Request) {
-	log.Println("synchronize")
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Print("upgrade:", err)
