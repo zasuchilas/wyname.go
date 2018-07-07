@@ -66,49 +66,21 @@ type Gps struct {
 func newGps(lat, lon float64) (gps *Gps, err error) {
 	// if lat > 180 || lat < -180 || lon > 90 || lon < -90 {
 	// if lat > 179.9 || lat < -179.9 || lon > 89 || lon < -89 {
-	if lat > 179.9 || lat < -179.9 || (lat > -0.1 && lat < 0.1) || lon > 89 || lon < -89 || (lon > -0.1 && lon < 0.1) {
+	if lat > 179.9 || lat < -179.9 || (lat > -0.1 && lat < 0.1) || lon > 72 || lon < -72 || (lon > -0.1 && lon < 0.1) {
+		/**
+		самые северные крупные поселения
+		10000 чел - Хаммерфест (Норвегия) lat 70.6
+		4000 чел. - Барроу (Аляска) lat 71.5
+		65000 чел - Тромсё (Норвегия) lat 69.6
+		180000 ч. - Норильск (Россия) lat 69.3
+		самый южный
+		60000 ч.  - Ушуая (Аргентина) lat -54.8
+		*/
 		err = fmt.Errorf("coordinates out of range")
 	}
 	// TODO: для крайних случаев делаем обработку (180, -180, 90, -90, 0)
 	// для большого превышения ? возвращаем ошибку, но крайние случаи - норма, обрабатываем
 	return &Gps{lat, lon}, err
-}
-
-// Вычислить все секторы
-// [0] member sector
-func (g *Gps) compute() (secs []string, err error) {
-	// main sector isec (Iam)
-	ila, ilo := g.sectornums()
-	isec := strconv.Itoa(ila) + ":" + strconv.Itoa(ilo)
-
-	// нужно вычислить точки A и C
-	north, east := g.dist589()
-	a, err := newGps(g.lat-north, g.lon-east)
-	if err != nil {
-		err = fmt.Errorf("failed to create point A")
-	}
-	c, err := newGps(g.lat+north, g.lon+east)
-	if err != nil {
-		err = fmt.Errorf("failed to create point C")
-	}
-	ala, alo := a.sectornums()
-	cla, clo := c.sectornums()
-	cap := (cla - ala + 1) * (clo - alo + 1) // TODO test this with different placies & 180
-	secs = make([]string, cap)
-	secs[0] = isec
-	idx := 1
-	var n string
-	for i := ala; i <= cla; i++ {
-		for j := alo; j <= clo; j++ {
-			n = strconv.Itoa(i) + ":" + strconv.Itoa(j)
-			if n != isec {
-				secs[idx] = n
-				idx++
-			}
-		}
-	}
-
-	return secs, nil
 }
 
 // Получить числовые части названия сектора точки

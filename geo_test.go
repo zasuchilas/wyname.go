@@ -68,23 +68,12 @@ func roundto(val float64, dig int) float64 {
 }
 
 // Выводит таблицу distable
-// func TestDistable(t *testing.T) {
-// 	dt := distable()
-// 	for i := 0; i < 90; i++ {
-// 		ipar := float64(i)
-// 		t.Error(ipar, dt[ipar])
-// 	}
-// }
-
-func TestCompute(t *testing.T) {
-	// for i, p := range placies {
-	// 	g, _ := newGps(p[0], p[1])
-
-	// }
-	yarplace := [2]float64{57.626569, 39.893787}
-	yar, _ := newGps(yarplace[0], yarplace[1])
-	secs, _ := yar.compute()
-	t.Error(secs)
+func TestDistable(t *testing.T) {
+	dt := distable()
+	for i := 0; i < 90; i++ {
+		ipar := float64(i)
+		t.Error(ipar, dt[ipar])
+	}
 }
 
 func TestCalculate(t *testing.T) {
