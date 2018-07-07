@@ -24,36 +24,16 @@ var placies = [][2]float64{
 	{-41.302729, 174.778453}, // Веллингтон
 }
 
-func TestDist589(t *testing.T) {
-	points := [][2]float64{
-		{57.633895, 39.834598},
-		{-57.633895, 39.834598},
-		{157.633895, 39.834598},
-		{-157.633895, 39.834598},
-		{1.633895, 39.834598},
-		{0, 39.834598},
-	}
-
-	dt := distable()
-	for _, point := range points {
-		g, _ := newGps(point[0], point[1])
-		_, d589 := g.dist589()
-		p := math.Floor(g.lat)
-		if d589 < dt[p] || d589 > dt[p+1] {
-			t.Error(g, d589, dt[p], dt[p+1])
-		}
-	}
-}
-
 // Вычисляет таблицу для всех параллелей
 // насколько градусов нужно сместиться на восток по параллели
-// чтобы преодолеть 589 метров
+// чтобы преодолеть 189 метров
 // (for develop only)
 func distable() map[float64]float64 {
 	ditab := make(map[float64]float64, 90)
-	equator := 0.0052910052910053
+	// equator := 0.0052910052910053
+	equator := 0.001697792869269949
 	// var dig float64 = 100000
-	for parallel := 0; parallel < 900; parallel++ {
+	for parallel := 0; parallel < 90; parallel++ {
 		ipar := float64(parallel)
 		ditab[ipar] = equator / math.Cos(ipar*(math.Pi/180))
 		// ditab[ipar] = math.Round((equator/math.Cos(ipar*(math.Pi/180)))*dig) / dig
@@ -77,9 +57,30 @@ func TestDistable(t *testing.T) {
 }
 
 func TestCalculate(t *testing.T) {
-	yarplace := [2]float64{57.626569, 39.893787}
-	yar, _ := newGps(yarplace[0], yarplace[1])
-	m, a, _ := yar.calculate()
-	t.Error("membersec", m)
-	t.Error("allsectors", a)
+	home := [2]float64{57.633936, 39.834348}        // 1 sector (see map)
+	museum := [2]float64{57.633372, 39.831215}      // 2 sectors
+	cemetery := [2]float64{57.630437, 39.830400}    // 4 sectors
+	firestation := [2]float64{57.638693, 39.835601} // 2 sectors
+
+	h, _ := newGps(home[0], home[1])
+	hm, ha, _ := h.calculate()
+	t.Error(h, "home (1 sector) member", hm, "all", ha)
+
+	m, _ := newGps(museum[0], museum[1])
+	mm, ma, _ := m.calculate()
+	t.Error(m, "museum (2 sectors) member", mm, "all", ma)
+
+	c, _ := newGps(cemetery[0], cemetery[1])
+	cm, ca, _ := c.calculate()
+	t.Error(c, "cemetery (4 sector) member", cm, "all", ca)
+
+	f, _ := newGps(firestation[0], firestation[1])
+	fm, fa, _ := f.calculate()
+	t.Error(f, "firestation (2 sector) member", fm, "all", fa)
+
+	// yarplace := [2]float64{57.626569, 39.893787}
+	// yar, _ := newGps(yarplace[0], yarplace[1])
+	// m, a, _ := yar.calculate()
+	// t.Error("membersec", m)
+	// t.Error("allsectors", a)
 }
