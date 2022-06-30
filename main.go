@@ -5,36 +5,69 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"sync/atomic"
 )
 
-var addr = flag.String("addr", ":6969", "http service address")
+var (
+	org  = flag.String("org", "https://localhost:6969", "http service address")
+	addr = flag.String("addr", ":6970", "ws service address")
+	cert = flag.String("cert", "", "ssl cert")
+	key  = flag.String("key", "", "ssl key")
+	camp *Camp
+)
 
 // go run main.go --addr="whatsyourna.me:8888"
 
 func main() {
 	flag.Parse()
 
-	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(w, r)
-	})
+	camp = newcamp()
+
+	http.HandleFunc("/", serveAll)
 
 	fmt.Println(*addr, "started")
-	err := http.ListenAndServe(*addr, nil)
+	var err error
+	if *cert == "" || *key == "" {
+		err = http.ListenAndServe(*addr, nil)
+	} else {
+		err = http.ListenAndServeTLS(*addr, *cert, *key, nil)
+	}
 	if err != nil {
 		log.Fatal("ListenAndServe", err)
 	}
 }
 
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL)
-	if r.URL.Path != "/" {
+func serveAll(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("Upgrade") == "websocket" {
+		path := r.URL.Path
+		if path == "/sync" {
+			synchronize(w, r)
+		} else {
+			if auth(path) { // security path
+				serveWs(w, r)
+			}
+		}
+	} else {
 		http.Error(w, "Not found", http.StatusNotFound)
-		return
 	}
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	http.ServeFile(w, r, "home.html")
+}
+
+// stat is total lifers counter
+var stat int64
+
+// statplus increases lifers counter
+func statplus() {
+	atomic.AddInt64(&stat, 1)
+}
+
+// statminus reduces lifers counter
+func statminus() {
+	atomic.AddInt64(&stat, -1)
+}
+
+// startget returns stat value
+func statget() string {
+	st := atomic.LoadInt64(&stat)
+	return strconv.FormatInt(st, 10)
 }
